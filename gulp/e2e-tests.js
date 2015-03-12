@@ -13,9 +13,9 @@ gulp.task('webdriver-update', $.protractor.webdriver_update);
 
 gulp.task('webdriver-standalone', $.protractor.webdriver_standalone);
 
-function runProtractor (done) {
+function runProtractorApp (done) {
 
-  gulp.src(paths.e2e + '/**/*.js')
+  gulp.src(paths.app.e2e + '/**/*.js')
     .pipe($.protractor.protractor({
       configFile: 'protractor.conf.js',
     }))
@@ -30,6 +30,6 @@ function runProtractor (done) {
     });
 }
 
-gulp.task('protractor', ['protractor:src']);
-gulp.task('protractor:src', ['serve:e2e', 'webdriver-update'], runProtractor);
-gulp.task('protractor:dist', ['serve:e2e-dist', 'webdriver-update'], runProtractor);
+gulp.task('protractor', ['protractor:app']);
+gulp.task('protractor:app', ['serve:app:e2e', 'webdriver-update'], runProtractorApp);
+gulp.task('protractor:app:dist', ['serve:app:e2e-dist', 'webdriver-update'], runProtractorApp);

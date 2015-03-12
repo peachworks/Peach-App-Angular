@@ -32,32 +32,42 @@ $ npm install
 
 You have a series of pre-configured commands you can leverage in your development.
 
-To launch a local server where you can make changes to the code and have the browser auto-refresh:
+Note: The reason for :app versions is so we can easily add in :widget and other types as we add in their support
 
-```
-$ gulp serve
-```
 
-To launch a local server that builds the files for production first:
+gulp                  Default task, calls clean then build
 
-```
-$ gulp serve:dist
-```
 
-To launch unit tests:
+gulp serve            Alias for gulp:serve:app
 
-```
-$ gulp test
-```
+gulp serve:app        Launches dev version of the app with live refresh as changes are made
 
-To launch end-to-end tests:
+gulp serve:app:dist   Launches production version of the app on a local server
 
-```
-$ gulp protractor
-```
 
-To build:
+gulp build            Builds all projects (App only, at the moment)
 
-```
-$ gulp build
-```
+gulp build:app        Builds the app for production
+
+
+gulp clean            Cleans the tmp and dist directories
+
+gulp clean:app        Cleans the app directories beneath tmp and dist
+
+
+gulp test             Launches unit tests on all
+
+gulp test:app         Launches unit tests on the app
+
+
+# ToDo
+
+Once Angular-New-Router is on bower, it needs:
+
+To be moved from package.json to bower.json
+
+To be removed from index.html
+
+In gulp/server.js, remove the line adding node_modules to the routes list
+
+In gulp/unit-tests, remove newRouter from the testFiles list

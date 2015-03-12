@@ -8,7 +8,7 @@ var wiredep = require('wiredep');
 
 var paths = gulp.paths;
 
-function runTests (singleRun, done) {
+function runTestsApp (singleRun, done) {
   var bowerDeps = wiredep({
     directory: 'bower_components',
     exclude: ['bootstrap-sass-official'],
@@ -17,9 +17,10 @@ function runTests (singleRun, done) {
   });
 
   var testFiles = bowerDeps.js.concat([
-    paths.tmp + '/serve/app/index.js',
-    paths.src + '/{app,components}/**/*.spec.js',
-    paths.src + '/{app,components}/**/*.mock.js'
+    'node_modules/angular-new-router/dist/router.es5.js',
+    paths.app.tmp + '/serve/index.js',
+    paths.app.src + '/**/*.spec.js',
+    paths.app.src + '/**/*.mock.js'
   ]);
 
   gulp.src(testFiles)
@@ -33,5 +34,5 @@ function runTests (singleRun, done) {
     });
 }
 
-gulp.task('test', ['browserify'], function (done) { runTests(true /* singleRun */, done) });
-gulp.task('test:auto', ['browserify'], function (done) { runTests(false /* singleRun */, done) });
+gulp.task('test:app', ['browserify:app'], function (done) { runTestsApp(true /* singleRun */, done) });
+gulp.task('test:app:auto', ['browserify:app'], function (done) { runTestsApp(false /* singleRun */, done) });

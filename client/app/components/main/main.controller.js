@@ -2,8 +2,8 @@
 /*jshint esnext: true */
 
 class MainController {
-  constructor ($scope) {
-    $scope.awesomeThings = [
+  constructor () {
+    this.awesomeThings = [
       {
         'title': 'AngularJS',
         'url': 'https://angularjs.org/',
@@ -47,12 +47,10 @@ class MainController {
         'logo': 'babel.png'
       }
     ];
-    $scope.awesomeThings.forEach(function(awesomeThing) {
+    this.awesomeThings.forEach(function(awesomeThing) {
       awesomeThing.rank = Math.random();
     });
   }
 }
-
-MainController.$inject = ['$scope'];
 
 export default MainController;

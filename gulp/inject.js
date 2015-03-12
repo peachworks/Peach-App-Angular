@@ -8,20 +8,20 @@ var $ = require('gulp-load-plugins')();
 
 var wiredep = require('wiredep').stream;
 
-gulp.task('inject', ['browserify'], function () {
+gulp.task('inject:app', ['browserify:app'], function () {
 
   var injectStyles = gulp.src([
-    paths.src + '/{app,components}/**/*.css'
+    paths.app.src + '/**/*.css'
   ], { read: false });
 
   var injectScripts = gulp.src([
-    paths.tmp + '/serve/{app,components}/**/*.js',
-    '!' + paths.src + '/{app,components}/**/*.spec.js',
-    '!' + paths.src + '/{app,components}/**/*.mock.js'
+    paths.app.tmp + '/serve/**/*.js',
+    '!' + paths.app.src + '/**/*.spec.js',
+    '!' + paths.app.src + '/**/*.mock.js'
   ], { read: false });
 
   var injectOptions = {
-    ignorePath: [paths.src, paths.tmp + '/serve'],
+    ignorePath: [paths.app.src, paths.app.tmp + '/serve'],
     addRootSlash: false
   };
 
@@ -29,10 +29,10 @@ gulp.task('inject', ['browserify'], function () {
     directory: 'bower_components'
   };
 
-  return gulp.src(paths.src + '/*.html')
+  return gulp.src('client/app.index.html')
     .pipe($.inject(injectStyles, injectOptions))
     .pipe($.inject(injectScripts, injectOptions))
     .pipe(wiredep(wiredepOptions))
-    .pipe(gulp.dest(paths.tmp + '/serve'));
+    .pipe(gulp.dest(paths.app.tmp + '/serve'));
 
 });

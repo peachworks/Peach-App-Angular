@@ -10,18 +10,20 @@ var browserSync = require('browser-sync');
 
 var middleware = require('./proxy');
 
-function browserSyncInit(baseDir, files, browser) {
+function browserSyncInit(baseDir, files, browser, indexFile) {
   browser = browser === undefined ? 'default' : browser;
+  indexFile = indexFile === undefined ? 'app.index.html' : indexFile;
 
   var routes = null;
-  if(baseDir === paths.src || (util.isArray(baseDir) && baseDir.indexOf(paths.src) !== -1)) {
+  if(baseDir === paths.app.src || (util.isArray(baseDir) && baseDir.indexOf(paths.app.src) !== -1)) {
     routes = {
-      '/bower_components': 'bower_components'
+      '/bower_components': 'bower_components',
+      '/node_modules': 'node_modules'
     };
   }
 
   browserSync.instance = browserSync.init(files, {
-    startPath: '/',
+    startPath: '/' + indexFile,
     server: {
       baseDir: baseDir,
       middleware: middleware,
@@ -31,28 +33,29 @@ function browserSyncInit(baseDir, files, browser) {
   });
 }
 
-gulp.task('serve', ['watch'], function () {
+gulp.task('serve', ['serve:app']);
+
+gulp.task('serve:app', ['watch:app'], function () {
   browserSyncInit([
-    paths.tmp + '/serve',
-    paths.src
+    paths.app.tmp + '/serve',
+    paths.app.src
   ], [
-    paths.src + '/{app,components}/**/*.css',
-    paths.tmp + '/serve/{app,components}/**/*.js',
-    paths.src + 'src/assets/images/**/*',
-    paths.tmp + '/serve/*.html',
-    paths.tmp + '/serve/{app,components}/**/*.html',
-    paths.src + '/{app,components}/**/*.html'
-  ]);
+    paths.app.src + '/{app,components}/**/*.css',
+    paths.app.tmp + '/serve/{app,components}/**/*.js',
+    paths.app.src + 'src/assets/images/**/*',
+    paths.app.tmp + '/serve/**/*.html',
+    paths.app.src + '/**/*.html'
+  ], undefined, 'app.index.html');
 });
 
-gulp.task('serve:dist', ['build'], function () {
-  browserSyncInit(paths.dist);
+gulp.task('serve:app:dist', ['build:app'], function () {
+  browserSyncInit(paths.app.dist, [], undefined, 'app.index.html');
 });
 
-gulp.task('serve:e2e', ['inject'], function () {
-  browserSyncInit([paths.tmp + '/serve', paths.src], null, []);
+gulp.task('serve:app:e2e', ['inject:app'], function () {
+  browserSyncInit([paths.app.tmp + '/serve', paths.app.src], null, [], 'app.index.html');
 });
 
-gulp.task('serve:e2e-dist', ['build'], function () {
-  browserSyncInit(paths.dist, null, []);
+gulp.task('serve:app:e2e-dist', ['build:app'], function () {
+  browserSyncInit(paths.app.dist, null, [], 'app.index.html');
 });
