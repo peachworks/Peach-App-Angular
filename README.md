@@ -71,3 +71,5 @@ To be removed from index.html
 In gulp/server.js, remove the line adding node_modules to the routes list
 
 In gulp/unit-tests, remove newRouter from the testFiles list
+
+Fix dist build...its busted until angular-new-router is actually in bower
