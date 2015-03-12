@@ -1,6 +1,10 @@
 {
   "name": "babel",
   "version": "0.0.0",
+  "scripts": {
+    "test": "gulp test",
+    "postinstall": "bower install --config.interactive=false"
+  },
   "dependencies": {},
   "devDependencies": {
     "browser-sync": "~1.7.1",
