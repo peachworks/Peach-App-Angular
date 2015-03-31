@@ -1,26 +1,30 @@
 <!doctype html>
-<html class="no-js">
+<html ng-app="peachApp" ng-strict-di>
   <head>
     <meta charset="utf-8">
-    <title>Peach App</title>
+    <title>peachApp</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <base href="/app.index.html">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
+    <!-- build:css({.tmp/app/serve,client/app}) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- run `gulp inject` to automatically populate bower styles dependencies -->
+    <!-- endbower -->
+    <!-- endbuild -->
 
     <!-- build:css({.tmp/app/serve,client/app}) styles/app.css -->
     <!-- inject:css -->
-    <!-- css files will be automaticaly insert here -->
+    <!-- css files will be automatically insert here -->
     <!-- endinject -->
     <!-- endbuild -->
   </head>
-  <body ng-app="peachApp" ng-strict-di ng-controller="AppController">
+  <body>
     <!--[if lt IE 10]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <ng-viewport></ng-viewport>
+    <div ng-view></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
@@ -32,17 +36,15 @@
       ga('create','UA-XXXXX-X');ga('send','pageview');
     </script>
 
-    <!-- build:js(client) scripts/vendor.js -->
+    <!-- build:js(client/app) scripts/vendor.js -->
     <!-- bower:js -->
-    <!-- run `gulp wiredep` to automaticaly populate bower script dependencies -->
+    <!-- run `gulp inject` to automatically populate bower script dependencies -->
     <!-- endbower -->
     <!-- endbuild -->
 
-    <script src="../node_modules/angular-new-router/dist/router.es5.js"></script>
-
-    <!-- build:js({.tmp/app/serve,.tmp/app/partials,client/app}) scripts/app.js -->
+    <!-- build:js({.tmp/app/serve,.tmp/app/partials}) scripts/app.js -->
     <!-- inject:js -->
-    <!-- js files will be automaticaly insert here -->
+    <!-- js files will be automatically insert here -->
     <!-- endinject -->
 
     <!-- inject:partials -->

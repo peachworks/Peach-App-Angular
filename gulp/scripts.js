@@ -1,31 +1,52 @@
 'use strict';
 
 var gulp = require('gulp');
-
-var paths = gulp.paths;
+var browserSync = require('browser-sync');
 
 var $ = require('gulp-load-plugins')();
 
-gulp.task('scripts:app', function () {
-  return gulp.src(paths.app.src + '/**/*.js')
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.babel())
-    .on('error', function handleError(err) {
-      console.error(err.toString());
-      this.emit('end');
-    })
-    .pipe(gulp.dest(paths.app.tmp + '/babel'))
-    .pipe($.size())
-});
+module.exports = function(options) {
+  function webpack(watch, callback) {
+    var webpackOptions = {
+      watch: watch,
+      module: {
+        preLoaders: [{ test: /\.js$/, exclude: /node_modules/, loader: 'jshint-loader'}],
+        loaders: [{ test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}]
+      },
+      output: { filename: 'app.js' }
+    };
 
-gulp.task('browserify:app', ['scripts:app'], function () {
-  return gulp.src(paths.app.tmp + '/babel/index.js', { read: false })
-    .pipe($.browserify())
-    .on('error', function handleError(err) {
-      console.error(err.toString());
-      this.emit('end');
-    })
-    .pipe(gulp.dest(paths.app.tmp + '/serve'))
-    .pipe($.size());
-});
+    if(watch) {
+      webpackOptions.devtool = 'inline-source-map';
+    }
+
+    var webpackChangeHandler = function(err, stats) {
+      if(err) {
+        options.errorHandler('Webpack')(err);
+      }
+      $.util.log(stats.toString({
+        colors: $.util.colors.supportsColor,
+        chunks: false,
+        hash: false,
+        version: false
+      }));
+      browserSync.reload();
+      if(watch) {
+        watch = false;
+        callback();
+      }
+    };
+
+    return gulp.src(options.src + '/app.js')
+      .pipe($.webpack(webpackOptions, null, webpackChangeHandler))
+      .pipe(gulp.dest(options.tmp + '/serve'));
+  }
+
+  gulp.task('scripts', function () {
+    return webpack(false);
+  });
+
+  gulp.task('scripts:watch', ['scripts'], function (callback) {
+    return webpack(true, callback);
+  });
+};

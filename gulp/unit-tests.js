@@ -5,34 +5,59 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
 var wiredep = require('wiredep');
+var karma = require('karma');
+var concat = require('concat-stream');
+var _ = require('lodash');
 
-var paths = gulp.paths;
-
-function runTestsApp (singleRun, done) {
-  var bowerDeps = wiredep({
-    directory: 'bower_components',
-    exclude: ['bootstrap-sass-official'],
-    dependencies: true,
-    devDependencies: true
-  });
-
-  var testFiles = bowerDeps.js.concat([
-    'node_modules/angular-new-router/dist/router.es5.js',
-    paths.app.tmp + '/serve/index.js',
-    paths.app.src + '/**/*.spec.js',
-    paths.app.src + '/**/*.mock.js'
-  ]);
-
-  gulp.src(testFiles)
-    .pipe($.karma({
-      configFile: 'karma.conf.js',
-      action: (singleRun)? 'run': 'watch'
-    }))
-    .on('error', function (err) {
-      // Make sure failed tests cause gulp to exit non-zero
-      throw err;
+module.exports = function(options) {
+  function listFiles(callback) {
+    var bowerDeps = wiredep({
+      directory: 'bower_components',
+      exclude: [/jquery/],
+      dependencies: true,
+      devDependencies: true
     });
-}
 
-gulp.task('test:app', ['browserify:app'], function (done) { runTestsApp(true /* singleRun */, done) });
-gulp.task('test:app:auto', ['browserify:app'], function (done) { runTestsApp(false /* singleRun */, done) });
+    var specFiles = [
+      options.src + '/**/*.spec.js',
+      options.src + '/**/*.mock.js'
+    ];
+
+    var htmlFiles = [
+      options.src + '/**/*.html'
+    ];
+
+    var srcFiles = [
+      options.tmp + '/serve/app.js'
+    ].concat(specFiles.map(function(file) {
+      return '!' + file;
+    }));
+
+
+    gulp.src(srcFiles)
+      .pipe(concat(function(files) {
+        callback(bowerDeps.js
+          .concat(_.pluck(files, 'path'))
+          .concat(htmlFiles)
+          .concat(specFiles));
+      }));
+  }
+
+  function runTests (singleRun, done) {
+    listFiles(function(files) {
+      console.log(files);
+      karma.server.start({
+        configFile: __dirname + '/../karma.conf.js',
+        files: files,
+        singleRun: singleRun
+      }, done);
+    });
+  }
+
+  gulp.task('test', ['scripts'], function(done) {
+    runTests(true, done);
+  });
+  gulp.task('test:auto', ['watch'], function(done) {
+    runTests(false, done);
+  });
+};

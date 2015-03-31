@@ -2,37 +2,39 @@
 
 var gulp = require('gulp');
 
-var paths = gulp.paths;
-
 var $ = require('gulp-load-plugins')();
 
 var wiredep = require('wiredep').stream;
 
-gulp.task('inject:app', ['browserify:app'], function () {
+module.exports = function(options) {
+  gulp.task('inject', ['scripts', 'styles'], function () {
+    var injectStyles = gulp.src([
+      options.tmp + '/serve/**/*.css',
+      '!' + options.tmp + '/serve/vendor.css'
+    ], { read: false });
 
-  var injectStyles = gulp.src([
-    paths.app.src + '/**/*.css'
-  ], { read: false });
 
-  var injectScripts = gulp.src([
-    paths.app.tmp + '/serve/**/*.js',
-    '!' + paths.app.src + '/**/*.spec.js',
-    '!' + paths.app.src + '/**/*.mock.js'
-  ], { read: false });
+    var injectScripts = gulp.src([
+      options.tmp + '/serve/**/*.js',
+      '!' + options.src + '/**/*.spec.js',
+      '!' + options.src + '/**/*.mock.js'
+    ], { read: false });
 
-  var injectOptions = {
-    ignorePath: [paths.app.src, paths.app.tmp + '/serve'],
-    addRootSlash: false
-  };
+    var injectOptions = {
+      ignorePath: [options.src, options.tmp + '/serve'],
+      addRootSlash: false
+    };
 
-  var wiredepOptions = {
-    directory: 'bower_components'
-  };
+    var wiredepOptions = {
+      directory: 'bower_components',
+      exclude: [/jquery/]
+    };
 
-  return gulp.src('client/app.index.html')
-    .pipe($.inject(injectStyles, injectOptions))
-    .pipe($.inject(injectScripts, injectOptions))
-    .pipe(wiredep(wiredepOptions))
-    .pipe(gulp.dest(paths.app.tmp + '/serve'));
+    return gulp.src(options.src + '/*.html')
+      .pipe($.inject(injectStyles, injectOptions))
+      .pipe($.inject(injectScripts, injectOptions))
+      .pipe(wiredep(wiredepOptions))
+      .pipe(gulp.dest(options.tmp + '/serve'));
 
-});
+  });
+};
