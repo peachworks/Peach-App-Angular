@@ -18,28 +18,14 @@ module.exports = function(options) {
       devDependencies: true
     });
 
-    var specFiles = [
-      options.src + '/**/*.spec.js',
-      options.src + '/**/*.mock.js'
-    ];
-
-    var htmlFiles = [
-      options.src + '/**/*.html'
-    ];
-
     var srcFiles = [
-      options.tmp + '/serve/app.js'
-    ].concat(specFiles.map(function(file) {
-      return '!' + file;
-    }));
-
+      'tests.webpack.js'
+    ];
 
     gulp.src(srcFiles)
       .pipe(concat(function(files) {
         callback(bowerDeps.js
-          .concat(_.pluck(files, 'path'))
-          .concat(htmlFiles)
-          .concat(specFiles));
+          .concat(_.pluck(files, 'path')));
       }));
   }
 
@@ -53,10 +39,15 @@ module.exports = function(options) {
     });
   }
 
-  gulp.task('test', ['scripts'], function(done) {
+  gulp.task('test', function(done) {
     runTests(true, done);
   });
+
   gulp.task('test:auto', ['watch'], function(done) {
+    runTests(false, done);
+  });
+
+  gulp.task('test:tdd', ['serve', 'watch'], function(done) {
     runTests(false, done);
   });
 };

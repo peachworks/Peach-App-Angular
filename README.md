@@ -28,48 +28,19 @@ $ npm install
 ```
 
 
-# Commands
+## Commands
 
-You have a series of pre-configured commands you can leverage in your development.
-
-Note: The reason for :app versions is so we can easily add in :widget and other types as we add in their support
-
-
-gulp                  Default task, calls clean then build
-
-
-gulp serve            Alias for gulp:serve:app
-
-gulp serve:app        Launches dev version of the app with live refresh as changes are made
-
-gulp serve:app:dist   Launches production version of the app on a local server
+| Command | Results |
+|---------|------------|
+| gulp    | Clean & Build |
+| gulp clean | Delete the contents of the .tmp/ & dist/ directories |
+| gulp serve | Launches dev version of the app with live refresh as changes are made (Preferred: See `gulp test:tdd`) |
+| gulp serve:dist | Launches production version of the app on a local server |
+| gulp build | Rebuild files into dist/ |
+| gulp test   | Run unit tests with coverage reporting |
+| gulp test:tdd   | Run unit tests continuously with coverage reporting |
 
 
-gulp build            Builds all projects (App only, at the moment)
+## ToDo
 
-gulp build:app        Builds the app for production
-
-
-gulp clean            Cleans the tmp and dist directories
-
-gulp clean:app        Cleans the app directories beneath tmp and dist
-
-
-gulp test             Launches unit tests on all
-
-gulp test:app         Launches unit tests on the app
-
-
-# ToDo
-
-Once Angular-New-Router is on bower, it needs:
-
-To be moved from package.json to bower.json
-
-To be removed from index.html
-
-In gulp/server.js, remove the line adding node_modules to the routes list
-
-In gulp/unit-tests, remove newRouter from the testFiles list
-
-Fix dist build...its busted until angular-new-router is actually in bower
+Add in namespaced commands for app, widgets, etc as we begin development on them

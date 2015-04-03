@@ -1,5 +1,5 @@
-'use strict';
 /*jshint esnext: true */
+'use strict';
 
 function AppConfig($routeProvider, $httpProvider) {
   $httpProvider.interceptors.push('peachHttpInterceptor');

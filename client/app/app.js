@@ -1,3 +1,4 @@
+/*jshint esnext: true */
 'use strict';
 
 // Config
@@ -18,3 +19,5 @@ angular.module('peachApp', [
 ])
   .config(                        AppConfig)
   .controller('MainController',   MainController);
+
+export default 'peachApp';

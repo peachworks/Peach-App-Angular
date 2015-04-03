@@ -1,8 +1,12 @@
+/*jshint esnext: true */
 'use strict';
+
+import peachApp from '../../app';
+import MainController from './main';
 
 describe('Component: Main', function() {
 
-  beforeEach(module('peachApp'));
+  beforeEach(angular.mock.module(peachApp));
 
   describe('Constructor', function() {
 

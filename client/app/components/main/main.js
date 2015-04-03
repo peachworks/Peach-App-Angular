@@ -1,5 +1,5 @@
-'use strict';
 /*jshint esnext: true */
+'use strict';
 
 class MainController {
   constructor($peach) {
