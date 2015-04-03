@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <base href="/">
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+  </head>
+  <body layout="column" ng-app="peachWebLogin" ng-strict-di ng-controller="LoginController as login">
+
+    <div layout="column" layout-fill>
+      <md-content class="login" layout="column" layout-fill flex>
+        <div layout="row" layout layout-align="center center">
+          <md-whiteframe class="md-whiteframe-z1 login-box" flex="50" layout="column">
+            <form name="loginForm" ng-submit="login.submit(loginForm.$valid, data)">
+              <h3>Peachworks v2 Login</h3>
+              <md-input-container>
+                <label>Username</label>
+                <input name="username" ng-model="data.username" required type="email" aria-label="Username">
+              </md-input-container>
+              <md-input-container>
+                <label>Password</label>
+                <input name="password" ng-model="data.password" required type="password" aria-label="Password">
+              </md-input-container>
+              <md-input-container>
+                <md-checkbox ng-model="data.remember" aria-label="Remember Me">
+                  Remember Me
+                </md-checkbox>
+              </md-input-container>
+              <md-input-container>
+                <md-button class="md-raised md-primary" aria-label="Log In">Log In</md-button>
+              </md-input-container>
+            </form>
+          </md-whiteframe>
+        </div>
+      </md-content>
+    </div>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-material/angular-material.js"></script>
+    <script src="bower_components/angular-cache/dist/angular-cache.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/ng-peach/dist/peach.js"></script>
+
+    <script>
+      (function() {
+        angular.module('peachWebLogin', [
+          'ngAnimate',
+          'ngAria',
+          'ngCookies',
+          'ngTouch',
+          'ngSanitize',
+          'ngResource',
+          'ngRoute',
+          'ngMaterial',
+          'ngPeach'
+        ])
+          .controller('LoginController', ['$peach', '$q', '$window', '$cookies', LoginController]);
+
+        function LoginController($peach, $q, $window, $cookies) {
+          var vm = this;
+
+          vm.submit = submit;
+
+          if($cookies.peach_sid) {
+            bootstrap();
+          }
+
+          function submit(valid, data) {
+            if(valid && !_.isEmpty(data)) {
+              $peach.session.login(data.username, data.password).then(function(message) {
+                bootstrap();
+
+                return true;
+              }, function(error) {
+                this.loginError = error;
+              });
+            } else {
+              return false;
+            }
+          }
+
+          function bootstrap() {
+            var promises = [];
+            promises.push($peach.user.getInfo());
+            promises.push($peach.user.getAccounts());
+
+            $q.all(promises).then(function(data) {
+              $peach.account.getInfo().then(function(account) {
+                  return $window.location.href = '/accounts/1/apps/appKey/#/';
+                }, function(error) {
+                  this.loginError = error;
+                });
+            });
+          }
+        }
+
+      })();
+    </script>
+  </body>
+</html>

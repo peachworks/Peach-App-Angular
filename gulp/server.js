@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var browserSyncSpa = require('browser-sync-spa');
-
 var util = require('util');
 
 var middleware = require('./proxy');
@@ -16,7 +15,20 @@ module.exports = function(options) {
     var routes = null;
     if(baseDir === options.src || (util.isArray(baseDir) && baseDir.indexOf(options.src) !== -1)) {
       routes = {
-        '/bower_components': 'bower_components'
+        '/bower_components': 'bower_components',
+        '/accounts/1/apps/appKey': options.tmp + '/serve',
+        '/accounts/1/apps/appKey/components': options.src + '/components',
+        '/accounts/1/apps/appKey/common': options.src + '/common',
+        '/accounts/1/apps/appKey/assets': options.src + '/assets',
+        '/accounts/1/bower_components': 'bower_components'
+      };
+    } else if (baseDir === options.dist || (util.isArray(baseDir) && baseDir.indexOf(options.dist) !== -1)) {
+      routes = {
+        '/bower_components': 'bower_components',
+        '/accounts/1/apps/appKey/scripts': options.dist + '/scripts',
+        '/accounts/1/apps/appKey/assets': options.dist + '/assets',
+        '/accounts/1/apps/appKey/styles': options.dist + '/styles',
+        '/accounts/1/bower_components': 'bower_components'
       };
     }
 
@@ -30,7 +42,7 @@ module.exports = function(options) {
     }
 
     browserSync.instance = browserSync.init({
-      startPath: '/',
+      startPath: 'login.html',
       server: server,
       browser: browser
     });
@@ -41,18 +53,18 @@ module.exports = function(options) {
   }));
 
   gulp.task('serve', ['watch'], function () {
-    browserSyncInit([options.tmp + '/serve', options.src]);
+    browserSyncInit([options.tmp + '/serve', options.src, 'client']);
   });
 
   gulp.task('serve:dist', ['build'], function () {
-    browserSyncInit(options.dist);
+    browserSyncInit([options.dist, 'client']);
   });
 
   gulp.task('serve:e2e', ['inject'], function () {
-    browserSyncInit([options.tmp + '/serve', options.src], []);
+    browserSyncInit([options.tmp + '/serve', options.src, 'client'], []);
   });
 
   gulp.task('serve:e2e-dist', ['build'], function () {
-    browserSyncInit(options.dist, []);
+    browserSyncInit([options.dist, 'client'], []);
   });
 };
