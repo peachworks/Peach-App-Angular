@@ -3,5 +3,5 @@ bower_components/
 coverage/
 .DS_Store
 .sass-cache/
-.tmp/app/
-dist/app/
+.tmp/
+dist/
