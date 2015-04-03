@@ -13,7 +13,8 @@ angular.module('peachApp', [
   'ngSanitize',
   'ngResource',
   'ngRoute',
-  'ngMaterial'
+  'ngMaterial',
+  'ngPeach'
 ])
   .config(                        AppConfig)
   .controller('MainController',   MainController);

@@ -2,16 +2,11 @@
 /*jshint esnext: true */
 
 class MainController {
-  constructor() {
+  constructor($peach) {
     this.title = 'Hi, from Main!';
-  }
-
-  truthy() {
-    return true;
   }
 }
 
-MainController.$inject = [];
-
+MainController.$inject = ['$peach'];
 
 export default MainController;

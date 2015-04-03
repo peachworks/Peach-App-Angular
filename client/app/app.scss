@@ -1,55 +1,41 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,700|Roboto:400,700,700italic,400italic);
+.peach-toolbar {
 
-html {
-  font-family: 'Roboto Slab', serif;
-}
+  .app-icon {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    margin: 10px auto;
+    background-size: 48px 48px;
 
-[layout=row] {
-  flex-direction: row;
-}
-
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
-
-.thumbnail {
-  height: 200px;
-
-  img.pull-right {
-    width: 50px;
+    img {
+      width: 48px;
+      height: 48px;
+    }
   }
-}
 
-md-toolbar.md-default-theme {
-  background-color: black;
-}
+  .menu {
 
-section.jumbotron {
-  margin-bottom: 30px;
-  padding: 1px 30px;
-  background-color: #5aadbb;
-  text-align: center;
+    .overlay {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
 
-  color: white;
+      .wrapper {
+        width: 175px;
+        float: right;
+        margin-top: 64px;
+        margin-right: 100px;
+        background-color: blue;
 
-  h1 {
-    font-size: 3em;
-  }
-}
+        .menu-item {
 
-.techs {
-  display: flex;
-  flex-flow: row wrap;
-
-  md-card {
-    width: 30%;
-
-    img.pull-right {
-      float: right;
-      width: 50px;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 }

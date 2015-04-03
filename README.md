@@ -11,9 +11,9 @@ Gulp
 
 Karma Testing
 
-Angular 1.4
+Angular 1.3
 
-ngNewRouter
+Angular Material
 
 ES6
 

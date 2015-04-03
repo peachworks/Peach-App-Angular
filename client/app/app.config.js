@@ -1,7 +1,9 @@
 'use strict';
 /*jshint esnext: true */
 
-function AppConfig($routeProvider) {
+function AppConfig($routeProvider, $httpProvider) {
+  $httpProvider.interceptors.push('peachHttpInterceptor');
+
   $routeProvider
     .when('/', {
       templateUrl: 'components/main/main.html',
@@ -13,6 +15,6 @@ function AppConfig($routeProvider) {
     });
 }
 
-AppConfig.$inject = ['$routeProvider'];
+AppConfig.$inject = ['$routeProvider', '$httpProvider'];
 
 export default AppConfig;
