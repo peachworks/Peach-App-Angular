@@ -60,7 +60,7 @@
           'ngResource',
           'ngRoute',
           'ngMaterial',
-          'ngPeach'
+          'ngPeach.ui'
         ])
           .controller('LoginController', ['$peach', '$q', '$window', '$cookies', LoginController]);
 
@@ -75,7 +75,7 @@
 
           function submit(valid, data) {
             if(valid && !_.isEmpty(data)) {
-              $peach.session.login(data.username, data.password).then(function(message) {
+              $peach.session.login(data.username, data.password, true).then(function(message) {
                 bootstrap();
 
                 return true;
@@ -94,7 +94,7 @@
 
             $q.all(promises).then(function(data) {
               $peach.account.getInfo().then(function(account) {
-                  return $window.location.href = '/accounts/1/apps/appKey/#/';
+                  return $window.location.href = '/preview/accounts/1/apps/appKey/#/';
                 }, function(error) {
                   this.loginError = error;
                 });

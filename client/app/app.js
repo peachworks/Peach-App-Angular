@@ -15,7 +15,7 @@ angular.module('peachApp', [
   'ngResource',
   'ngRoute',
   'ngMaterial',
-  'ngPeach'
+  'ngPeach.ui'
 ])
   .config(                        AppConfig)
   .controller('MainController',   MainController);

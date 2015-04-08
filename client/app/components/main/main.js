@@ -3,7 +3,12 @@
 
 class MainController {
   constructor($peach) {
-    this.title = 'Hi, from Main!';
+    this.MyDogs = null;
+    this.dogs = {};
+    this.$peach = $peach;
+    this.title = 'Hello from Peachworks!';
+
+    this.activate();
   }
 }
 
