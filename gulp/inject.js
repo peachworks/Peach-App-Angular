@@ -30,7 +30,7 @@ module.exports = function(options) {
       exclude: [/jquery/, /bootstrap\.js/]
     };
 
-    return gulp.src(options.src + '/*.html')
+    return gulp.src([options.src + '/*.html', 'client/login.html'])
       .pipe($.inject(injectStyles, injectOptions))
       .pipe($.inject(injectScripts, injectOptions))
       .pipe(wiredep(wiredepOptions))

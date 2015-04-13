@@ -5,33 +5,50 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <base href="/">
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+
+    <!-- build:css({.tmp/app/serve,client/app}) styles/app.css -->
+    <!-- inject:css -->
+    <!-- css files will be automatically insert here -->
+    <!-- endinject -->
+    <!-- endbuild -->
   </head>
   <body layout="column" ng-app="peachWebLogin" ng-strict-di ng-controller="LoginController as login">
 
     <div layout="column" layout-fill>
-      <md-content class="login" layout="column" layout-fill flex>
-        <div layout="row" layout layout-align="center center">
-          <md-whiteframe class="md-whiteframe-z1 login-box" flex="50" layout="column">
-            <form name="loginForm" ng-submit="login.submit(loginForm.$valid, data)">
-              <h3>Peachworks v2 Login</h3>
-              <md-input-container>
-                <label>Username</label>
-                <input name="username" ng-model="data.username" required type="email" aria-label="Username">
-              </md-input-container>
-              <md-input-container>
-                <label>Password</label>
-                <input name="password" ng-model="data.password" required type="password" aria-label="Password">
-              </md-input-container>
-              <md-input-container>
-                <md-checkbox ng-model="data.remember" aria-label="Remember Me">
-                  Remember Me
-                </md-checkbox>
-              </md-input-container>
-              <md-input-container>
-                <md-button class="md-raised md-primary" aria-label="Log In">Log In</md-button>
-              </md-input-container>
-            </form>
-          </md-whiteframe>
+      <md-content layout="column" layout-fill flex>
+        <div class="peach-login" flex layout="column">
+          <div layout="row" layout layout-align="center center" flex>
+            <div layout="column" flex>
+              <div class="login-container">
+                <form name="loginForm" ng-submit="login.submit(loginForm.$valid, data)">
+                  <img class="logo" src="assets/img/login/logo_login_2x.png" alt="PeachWorks"/>
+                  <md-input-container>
+                    <label>Email</label>
+                    <input name="username" ng-model="data.username" required type="email" aria-label="Email">
+                  </md-input-container>
+                  <md-input-container>
+                    <label>Password</label>
+                    <input name="password" ng-model="data.password" required type="password" aria-label="Password">
+                  </md-input-container>
+                  <div flex layout="row">
+                    <div flex="55" layout="column">
+                      <md-input-container class="checkbox-container">
+                        <md-checkbox ng-model="data.remember" aria-label="Stay Logged In">Stay Logged In</md-checkbox>
+                      </md-input-container>
+                    </div>
+                    <div flex layout="column">
+                      <md-input-container>
+                        <md-button class="md-raised md-primary" aria-label="Login">Login</md-button>
+                      </md-input-container>
+                    </div>
+                  </div>
+                </form>
+            </div>
+            </div>
+          </div>
+          <div class="login-footer" layout="row" layout-align="center center">
+            <p><a href="#/forgotpw">Help: I'm having trouble signing in or forgot my password</a></p>
+          </div>
         </div>
       </md-content>
     </div>

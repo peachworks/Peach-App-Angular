@@ -39,5 +39,124 @@
     }
   }
 }
+
+
+.peach-login {
+  background-color: slategray;
+
+  .login-container {
+    margin: 0 auto;
+    width: 325px;
+
+    .logo {
+      width: 100%;
+    }
+
+    md-input-container {
+
+      &.md-input-focused {
+        label {
+          margin-left: 0px;
+        }
+      }
+
+      label {
+        color: #FFF;
+        font-style: italic;
+        margin-left: 10px;
+      }
+
+      .md-input {
+        border-color: #FFF;
+        border-width: 0 0 2px 0;
+      }
+
+      .md-button {
+        height: 34px;
+
+        &.md-primary {
+
+          &.md-raised {
+            background-color: rgba(255, 255, 255, 0.35);
+            box-shadow: none;
+            border-radius: 0;
+            margin-top: 4px;
+
+            &:not([disabled]) {
+
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.45);
+                transform: none;
+              }
+            }
+          }
+        }
+      }
+
+      &.checkbox-container {
+        margin-left: -15px;
+        margin-top: -15px;
+
+        md-checkbox {
+          color: #FFF;
+
+          &.md-checked {
+
+            .md-icon {
+
+                &:after {
+                  left: 11px;
+                  top: 2px;
+                  width: 12px;
+                  height: 23px;
+                  border: 4px solid;
+                  border-top: 0;
+                  border-left: 0;
+                }
+            }
+          }
+
+          .md-container {
+            width: 38px;
+            height: 38px;
+
+            &:hover {
+
+              .md-icon {
+                background-color: rgba(255, 255, 255, 0.45);
+              }
+            }
+
+            .md-icon {
+              background-color: rgba(255, 255, 255, 0.35);
+              border: 0;
+              border-radius: 0;
+              height: 34px;
+              width: 34px;
+            }
+
+            .md-ripple-container {
+              right: -10px;
+              bottom: -10px;
+            }
+          }
+
+          .md-label {
+            vertical-align: top;
+            margin-top: 9px;
+          }
+        }
+      }
+    }
+  }
+
+  .login-footer {
+
+    a {
+      color: #FFF;
+      text-decoration: none;
+    }
+  }
+}
 // injector
 // endinjector
