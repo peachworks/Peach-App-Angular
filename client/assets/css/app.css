@@ -1,0 +1,78 @@
+/** These are the publicly documented CSS styles for app developers **/
+
+
+/****** blocks ********/
+.block {
+  border-radius: 6px;
+  -webkit-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.20);
+     -moz-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.20);
+          box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.20);
+  border: 3px solid #e3dfdc;
+  background-color: #ffffff;
+  background-image: url('/assets/img/block_gradient.png');
+  background-repeat: repeat-x;
+  background-position: bottom;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.block-heading {
+	padding: 6px 20px;
+	margin: -20px -20px 20px;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
+	border-bottom: 1px solid #e3dfdc;
+	background-image: url('/assets/img/block_gradient.png');
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-color: #FCFBFA;
+  overflow: hidden;
+
+}
+
+.block-heading > input.filter {
+  margin: 0 1px 0 0;
+  float: right;
+  width: 23%;
+  padding: 3px 6px;
+  font-size: 14px;
+}
+
+.block-title {
+	margin-top: 0;
+	margin-bottom: -1px;
+	color: #80b500;
+	padding-top: 2px;
+	float: left;
+}
+
+.block-title.divider {
+	padding-right: 20px;
+	border-right: 1px dotted #e3dfdc;
+  margin-right: 20px;
+}
+
+.block-heading button.btn {
+ color: #999999;
+ margin-top: 2px;
+}
+
+
+}
+.horizontal-bar-app
+{
+  height: 25px;
+  width: 112px;
+  margin: 2px 0px;
+  padding-right: 6px;
+}
+
+.horizontal-bar-app-path
+{
+  padding-top: 8px;
+}
+
+.horizontal-bar-app-seperator
+{
+  padding: 9px 0 0 6px;
+}

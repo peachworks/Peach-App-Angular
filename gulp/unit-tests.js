@@ -13,7 +13,7 @@ module.exports = function(options) {
   function listFiles(callback) {
     var bowerDeps = wiredep({
       directory: 'bower_components',
-      exclude: [/jquery/],
+      exclude: [/jquery/, /bootstrap\.js/],
       dependencies: true,
       devDependencies: true
     });

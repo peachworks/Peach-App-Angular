@@ -1,0 +1,149 @@
+.container-fluid.dashboard-container-fluid {
+    padding: 0px;
+}
+
+.dashboard-widget-container {
+    width: 345px;
+}
+
+.account-dashboard-column {
+    min-width: 345px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.account-dashboard-column.droppable {
+    background: #F0FFFF;
+    opacity: 0.6;
+    padding-top: 10px;
+}
+
+.dashboard-widget-placeholder, .new-widget-handle-container {
+    height: 285px;
+    width: 335px;
+    background: transparent;
+    border: 3px dashed #aaa;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+}
+
+.new-widget-handle-container {
+    border: 0px;
+}
+
+.new-widget-handle {
+    font-size: 30px;
+    line-height: 279px;
+    color: #aaa;
+    cursor: pointer;
+    border: 3px dashed #aaa;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.new-widget-handle i {
+    color: #80b500;
+}
+
+.dashboard-widget {
+    padding: 10px;
+    position: relative;
+    min-height: 265px;
+    margin-right: 10px;
+}
+
+.dashboard-widget .dashboard-widget-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff url("/img/spinner8.gif") center center no-repeat;
+}
+
+.dashboard-widget .dashboard-widget-header {
+    text-transform: uppercase;
+    text-align: left;
+    color: #106db0;
+    line-height: 14px;
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    width: 305px;
+}
+
+.dashboard-widget .dashboard-widget-header.draggable {
+    cursor: move;
+}
+
+.dashboard-widget .dashboard-widget-body {
+    text-align: left;
+    max-height: 230px;
+}
+
+.dashboard-widget .dashboard-widget-body.full-size {
+    max-height: 490px;
+}
+
+.dashboard-widget .dashboard-widget-edit-handle {
+    position: absolute;
+    top: 4px;
+    right: 3px;
+    color: #999;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 30px;
+    padding: 3px 0;
+    margin: 2px 0 0;
+    -webkit-border-top-left-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border: 1px solid #fff;
+    border-bottom: 0px;
+    background: #fff;
+}
+
+.dashboard-widget.open .dashboard-widget-edit-handle:hover {
+    color: #106db0;
+}
+
+.dashboard-widget.open .dashboard-widget-edit-handle {
+    border: 1px solid #ccc;
+    border-bottom: 0px;
+    z-index: 500;
+    color: #106db0;
+}
+
+.dashboard-widget .dashboard-widget-edit-handle [class^="icon-"]:before, [class*=" icon-"]:before {
+    margin: 0;
+}
+
+.dashboard-widget .dropdown-menu {
+    top: 30px;
+    right: 3px;
+    z-index: 400;
+    -webkit-border-radius: 6px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius: 6px;
+    -moz-border-radius-topright: 0;
+    border-radius: 6px;
+    border-top-right-radius: 0;
+}
+
+.dashboard-widget .dropdown-menu .divider {
+    margin: 0px;
+}

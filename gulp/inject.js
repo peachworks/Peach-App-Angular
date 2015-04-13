@@ -27,7 +27,7 @@ module.exports = function(options) {
 
     var wiredepOptions = {
       directory: 'bower_components',
-      exclude: [/jquery/]
+      exclude: [/jquery/, /bootstrap\.js/]
     };
 
     return gulp.src(options.src + '/*.html')

@@ -1,0 +1,103 @@
+section {
+    padding: 40px 0;
+}
+
+header .row {
+    padding: 0;
+}
+
+header .title {
+    color: #e5e5e5;
+    font-family: 'ProximaNovaT-Thin';
+    font-weight: bold;
+    font-size: 18px;
+    padding: 20px 0 10px;
+}
+
+header .title img {
+    width: 110px;
+    margin-right: 7px;
+    margin-bottom: 9px;
+}
+
+.panel {
+    text-align: left;
+    border: none;
+}
+
+.panel-heading {
+    border: none;
+    background-color: #8cc758;
+    color: #fff;
+}
+
+h2 {
+    margin: 0;
+    font-family: 'ProximaNovaT-Thin';
+    font-size: 24px;
+}
+
+.col-md-3 .panel-group {
+    margin-right: -15px;
+    margin-left: -15px;
+    font-size: 13px;
+}
+
+.col-md-3 .panel-group .panel+.panel {
+    margin-top: 0;
+}
+
+.col-md-3 .panel-group>.panel>a {
+    padding: 8px 30px;
+    display: block;
+}
+
+.col-md-3 .panel-group>.panel.active>a {
+    background-color: #8cc758;
+    color: #fff;
+}
+
+.col-md-3 .panel-group .panel {
+    border: none;
+    box-shadow: none;
+}
+
+.col-md-3 .panel-group a {
+    color: #2e98cc;
+}
+
+.col-md-3 .panel-group ul {
+    padding: 10px 0;
+    margin-bottom: 0;
+}
+
+.col-md-3 .panel-group ul li{
+    list-style-type: none;
+    padding: 0 0 0 42px;
+    margin-top: 10px;
+    border-left: 7px solid #fff;
+}
+
+.col-md-3 .panel-group ul li.active {
+    border-color: #c3e2A8;
+}
+
+.col-md-3 .panel-group ul li.active a {
+    color: #a7a9ac;
+}
+
+.col-md-9 .panel-body {
+    padding: 30px;
+}
+.col-md-9 h2 {
+    opacity: 0.7;
+}
+
+.col-md-9 h3 {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.col-md-9 h3:first-child {
+    margin-top: 0;
+}
