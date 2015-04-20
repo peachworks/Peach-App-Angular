@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <base href="/">
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+    <link rel="stylesheet" href="bower_components/peach.css/dist/peach.css">
 
     <!-- build:css({.tmp/app/serve,client/app}) styles/app.css -->
     <!-- inject:css -->
@@ -74,25 +75,24 @@
           'ngCookies',
           'ngTouch',
           'ngSanitize',
-          'ngResource',
           'ngRoute',
           'ngMaterial',
           'ngPeach.ui'
         ])
-          .controller('LoginController', ['$peach', '$q', '$window', '$cookies', LoginController]);
+          .controller('LoginController', ['$peach', '$q', '$window', '$cookieStore', LoginController]);
 
-        function LoginController($peach, $q, $window, $cookies) {
+        function LoginController($peach, $q, $window, $cookieStore) {
           var vm = this;
 
           vm.submit = submit;
 
-          if($cookies.peach_sid) {
+          if($cookieStore.get($peach.session.getDevSessionCookieName())) {
             bootstrap();
           }
 
           function submit(valid, data) {
             if(valid && !_.isEmpty(data)) {
-              $peach.session.login(data.username, data.password, true).then(function(message) {
+              $peach.session.login(data.username, data.password).then(function(message) {
                 bootstrap();
 
                 return true;
@@ -107,14 +107,14 @@
           function bootstrap() {
             var promises = [];
             promises.push($peach.user.getInfo());
-            promises.push($peach.user.getAccounts());
+            //promises.push($peach.user.getAccounts()); // get v1/developers
 
             $q.all(promises).then(function(data) {
-              $peach.account.getInfo().then(function(account) {
-                  return $window.location.href = '/preview/accounts/1/apps/appKey/#/';
-                }, function(error) {
-                  this.loginError = error;
-                });
+              //$peach.account.getInfo().then(function(account) {
+                  return $window.location.href = '/accounts/1/apps/appKey/#/';
+              //  }, function(error) {
+              //    this.loginError = error;
+              //  });
             });
           }
         }

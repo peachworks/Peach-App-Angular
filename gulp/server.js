@@ -16,19 +16,19 @@ module.exports = function(options) {
     if(baseDir === options.src || (util.isArray(baseDir) && baseDir.indexOf(options.src) !== -1)) {
       routes = {
         '/bower_components': 'bower_components',
-        '/preview/accounts/1/apps/appKey': options.tmp + '/serve',
-        '/preview/accounts/1/apps/appKey/components': options.src + '/components',
-        '/preview/accounts/1/apps/appKey/common': options.src + '/common',
-        '/preview/accounts/1/apps/appKey/assets': options.src + '/assets',
-        '/preview/accounts/1/bower_components': 'bower_components'
+        '/accounts/1/apps/appKey': options.tmp + '/serve',
+        '/accounts/1/apps/appKey/components': options.src + '/components',
+        '/accounts/1/apps/appKey/common': options.src + '/common',
+        '/accounts/1/apps/appKey/assets': options.src + '/assets',
+        '/accounts/1/bower_components': 'bower_components'
       };
     } else if (baseDir === options.dist || (util.isArray(baseDir) && baseDir.indexOf(options.dist) !== -1)) {
       routes = {
         '/bower_components': 'bower_components',
-        '/preview/accounts/1/apps/appKey/scripts': options.dist + '/scripts',
-        '/preview/accounts/1/apps/appKey/assets': options.dist + '/assets',
-        '/preview/accounts/1/apps/appKey/styles': options.dist + '/styles',
-        '/preview/accounts/1/bower_components': 'bower_components'
+        '/accounts/1/apps/appKey/scripts': options.dist + '/scripts',
+        '/accounts/1/apps/appKey/assets': options.dist + '/assets',
+        '/accounts/1/apps/appKey/styles': options.dist + '/styles',
+        '/accounts/1/bower_components': 'bower_components'
       };
     }
 

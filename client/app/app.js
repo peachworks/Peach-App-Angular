@@ -12,7 +12,6 @@ angular.module('peachApp', [
   'ngCookies',
   'ngTouch',
   'ngSanitize',
-  'ngResource',
   'ngRoute',
   'ngMaterial',
   'ngPeach.ui'
