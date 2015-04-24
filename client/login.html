@@ -18,14 +18,21 @@
     <div layout="column" layout-fill>
       <md-content layout="column" layout-fill flex>
         <div class="peach-login" flex layout="column">
-          <div layout="row" layout layout-align="center center" flex>
+          <div class="login-body" layout="row" layout layout-align="center center" flex>
             <div layout="column" flex>
-              <div class="login-container">
+              <md-whiteframe class="login-container md-whiteframe-z1">
                 <form name="loginForm" ng-submit="login.submit(loginForm.$valid, data)">
-                  <img class="logo" src="assets/img/login/logo_login_2x.png" alt="PeachWorks"/>
+                  <img class="logo" src="assets/img/logo/logo_color_2x.png" alt="PeachWorks"/>
+                  <div ng-show="login.loginError" class="form-error-container">
+                    <p class="form-error" ng-bind="login.loginError"></p>
+                  </div>
                   <md-input-container>
-                    <label>Email</label>
-                    <input name="username" ng-model="data.username" required type="email" aria-label="Email">
+                    <label>Email
+                      <span ng-if="loginForm.email.$touched">
+                        <span ng-if="loginForm.$error.email">Address: Must be in valid format</span>
+                      </span>
+                    </label>
+                    <input name="email" ng-model="data.email" required type="email" aria-label="Email">
                   </md-input-container>
                   <md-input-container>
                     <label>Password</label>
@@ -39,12 +46,15 @@
                     </div>
                     <div flex layout="column">
                       <md-input-container>
-                        <md-button class="md-raised md-primary" aria-label="Login">Login</md-button>
+                        <md-button class="md-raised md-primary" aria-label="Login">
+                          <span ng-if="!login.loading">Login</span>
+                          <md-progress-circular ng-if="login.loading" md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                        </md-button>
                       </md-input-container>
                     </div>
                   </div>
                 </form>
-            </div>
+              </md-whiteframe>
             </div>
           </div>
           <div class="login-footer" layout="row" layout-align="center center">
@@ -60,7 +70,6 @@
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-material/angular-material.js"></script>
     <script src="bower_components/angular-cache/dist/angular-cache.js"></script>
@@ -79,14 +88,14 @@
           'ngMaterial',
           'ngPeach.ui'
         ])
-          .controller('LoginController', ['$peach', '$q', '$window', '$cookieStore', LoginController]);
+          .controller('LoginController', ['$peach', '$q', '$window', '$cookies', LoginController]);
 
-        function LoginController($peach, $q, $window, $cookieStore) {
+        function LoginController($peach, $q, $window, $cookies) {
           var vm = this;
 
           vm.submit = submit;
 
-          if($cookieStore.get($peach.session.getDevSessionCookieName())) {
+          if($cookies[$peach.session.getDevSessionCookieName()]) {
             bootstrap();
           }
 
@@ -110,11 +119,7 @@
             //promises.push($peach.user.getAccounts()); // get v1/developers
 
             $q.all(promises).then(function(data) {
-              //$peach.account.getInfo().then(function(account) {
-                  return $window.location.href = '/accounts/1/apps/appKey/#/';
-              //  }, function(error) {
-              //    this.loginError = error;
-              //  });
+              return $window.location.href = '/accounts/1/apps/appKey/#/';
             });
           }
         }
