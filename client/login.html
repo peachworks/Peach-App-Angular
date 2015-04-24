@@ -101,7 +101,7 @@
 
           function submit(valid, data) {
             if(valid && !_.isEmpty(data)) {
-              $peach.session.login(data.username, data.password).then(function(message) {
+              $peach.session.login(data.email, data.password).then(function(message) {
                 bootstrap();
 
                 return true;
