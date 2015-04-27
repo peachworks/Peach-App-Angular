@@ -14,14 +14,16 @@ function AppConfig($routeProvider, /*$httpProvider, */$peachSessionProvider) {
       templateUrl: 'components/main/main.html',
       controller: 'MainController',
       controllerAs: 'main',
-      title: "Title",
+      name: 'Title',
+      path: 'main',
       position: 0
     })
     .when('/settings', {
       templateUrl: 'components/main/main.html',
       controller: 'MainController',
       controllerAs: 'main',
-      title: "Settings",
+      name: 'Settings',
+      path: 'settings',
       position: 0,
       is_settings_page: true,
       is_welcome_page: false
