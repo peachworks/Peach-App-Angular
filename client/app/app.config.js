@@ -1,13 +1,7 @@
 /*jshint esnext: true */
 'use strict';
 
-function AppConfig($routeProvider, /*$httpProvider, */$peachSessionProvider) {
-
-  angular.extend($peachSessionProvider.defaults, {
-    apiURL: 'https://api.peachworks.com'
-  });
-
-  //$httpProvider.interceptors.push('peachHttpInterceptor');
+function AppConfig($routeProvider) {
 
   $routeProvider
     .when('/', {
@@ -33,6 +27,6 @@ function AppConfig($routeProvider, /*$httpProvider, */$peachSessionProvider) {
     });
 }
 
-AppConfig.$inject = ['$routeProvider', /*'$httpProvider', */'$peachSessionProvider'];
+AppConfig.$inject = ['$routeProvider'];
 
 export default AppConfig;

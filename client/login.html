@@ -126,5 +126,14 @@
 
       })();
     </script>
+
+    <script>
+  		angular.module('peachWebLogin').run(['$peach', function($peach) {
+  			$peach.session.setOptions({
+  				apiURL: 'https://api.dev.peachworks.com',
+  				apiVersion: 'v1'
+  			});
+  		}]);
+  	</script>
   </body>
 </html>
