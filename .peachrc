@@ -1,0 +1,8 @@
+{
+  "framework": {
+    "angular": {
+      "module": "fictionalOctoTribble",
+      "version": "1.4.8"
+    }
+  }
+}

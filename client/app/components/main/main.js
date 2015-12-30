@@ -1,22 +1,9 @@
-/*jshint esnext: true */
-'use strict';
-
 class MainController {
-  constructor($peach) {
-    this.$peach = $peach;
-    this.title = 'Hello from Peachworks!';
-
-    this.activate();
-
-
-  }
-
-  activate() {
-    // Bootstrap
-
+  constructor() {
+    this.title = 'Main Page';
   }
 }
 
-MainController.$inject = ['$peach'];
+MainController.$inject = [];
 
 export default MainController;

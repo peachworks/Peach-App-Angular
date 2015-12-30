@@ -1,7 +1,7 @@
 import peachApp from '../../app';
-import {MainController} from './main';
+import {SetupController} from './setup';
 
-describe('Component: Main', () => {
+describe('Component: Setup', () => {
   let $rootScope, $controller, ctrl;
 
   beforeEach(angular.mock.module(peachApp));
@@ -9,13 +9,13 @@ describe('Component: Main', () => {
   beforeEach(angular.mock.inject(($injector) => {
     $rootScope = $injector.get('$rootScope');
     $controller = $injector.get('$controller');
-    ctrl = $controller('MainController', {});
+    ctrl = $controller('SetupController', {});
   }));
 
   describe('Constructor', () => {
 
-    it('should construct a Main Controller', () => {
-      expect(ctrl.title).to.be.equals('Main Page');
+    it('should construct a Setup Controller', () => {
+      expect(ctrl.title).to.be.equals('Setup Page');
     });
   });
 

@@ -1,7 +1,3 @@
 node_modules/
-bower_components/
 coverage/
 .DS_Store
-.sass-cache/
-.tmp/
-dist/
