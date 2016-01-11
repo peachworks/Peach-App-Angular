@@ -2,7 +2,7 @@ import './intro.css';
 import logoImage from '../../../assets/img/logo/logo_color_2x.png';
 
 class IntroController {
-  constructor() {
+  constructor(commonService) {
     this.logoImage = logoImage;
     this.title = 'Intro Page';
   }
@@ -12,6 +12,6 @@ class IntroController {
   }
 }
 
-IntroController.$inject = [];
+IntroController.$inject = ['commonService'];
 
 export default IntroController;

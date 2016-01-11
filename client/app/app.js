@@ -21,6 +21,9 @@ import IntroController            from './components/intro/intro';
 import MainController             from './components/main/main';
 import SetupController            from './components/setup/setup';
 
+// Services
+import commonService              from './common/services/common/common';
+
 angular.module(peachRc.framework.angular.module, [
   angularAnimate,
   angularAria,
@@ -29,7 +32,9 @@ angular.module(peachRc.framework.angular.module, [
   angularMaterial,
   angularRoute,
   angularSanitize,
-  'ngPeach.ui'  // Need to fix this to export properly from ngPeach
+  'ngPeach.ui',  // Need to fix this to export properly from ngPeach
+
+  commonService.moduleName
 ])
   .config(routing)
   .controller('IntroController', IntroController)
