@@ -1,0 +1,150 @@
+<peach-location-alert></peach-location-alert>
+
+<peach-page-header>
+
+    <h1>Item Units</h1>
+
+    <peach-search
+        ng-model="vm.searchParams.searchQuery"
+        ng-change="vm.onSearchPhraseUpdateCallback();"
+        ng-disabled="vm.blockers.api_processing"
+        ng-model-options="{
+           updateOn: 'default blur',
+           debounce: {
+             'default': 500,
+             'blur': 0
+           }
+         }">
+    </peach-search>
+
+</peach-page-header>
+
+<peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+    {{ vm.userInfo.message }}
+</peach-message>
+
+<peach-card can-collapse="true" is-open="true">
+
+    <peach-card-header title="Filters">
+        <md-button ng-show="vm.filters.gl_account_id" class="md-primary" ng-click="vm.clearFilters();" ng-disabled="vm.blockers.api_processing" title="Clear filters" aria-label="Clear filters">
+            CLEAR FILTERS
+        </md-button>
+    </peach-card-header>
+
+    <peach-card-content>
+
+        <form name="vm.forms.itemsFilters" layout="row" flex layout-wrap class="md-padding">
+
+            <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.gl_account_id}">
+            
+                <label>Inventory Category</label>
+                
+                <md-select
+                    name="categoryFilter"
+                    ng-model="vm.filters.gl_account_id"
+                    ng-change="vm.filterTable();"
+                    ng-disabled="vm.blockers.api_processing"
+                    aria-label="Inventory Category"
+                >
+                    <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                </md-select>
+                
+            </md-input-container>
+
+        </form>
+
+    </peach-card-content>
+
+</peach-card>
+
+<peach-card loading="vm.blockers.api_processing">
+
+    <peach-card-content>
+
+        <md-data-table-container>
+
+            <table md-data-table>
+
+                <thead>
+                    <tr>
+                        <th style="width: 35%;" name="Items and Units"></th>
+                        <th style="width: 25%;" name="Conversion"></th>
+                        <th style="width: 20%;" name="Count"></th>
+                    </tr>
+                </thead>
+
+                <tbody ng-repeat="item in vm.items">
+
+                    <tr>
+
+                        <td>
+                            <a ng-click="item.is_expanded = !item.is_expanded" title="View {{ ::item.name }} units" >
+                                {{ ::item.name }}
+                            </a>
+                            <!--<a ng-click="openNewUnitForm(item.id);" title="Add new item for {{ ::item.name }}" style="float: right;" >
+                                <i class="icon-plus"></i>
+                            </a>-->
+                        </td>
+                        <td colspan="3">
+                            &nbsp;
+                        </td>
+
+                    </tr>
+
+                    <tr ng-if="item.units.length > 0 && item.is_expanded" ng-repeat="itemUnit in item.units">
+
+                        <td>
+                            {{ ::itemUnit.display_name }}
+                        </td>
+
+                        <td>
+                            {{ ::itemUnit.conversion_label }}
+                        </td>
+
+                        <td>
+
+                            <md-checkbox
+                                ng-model="itemUnit.single_location_mode_data.is_count_unit"
+                                aria-label="Count"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditItemUnits"
+                                ng-change="vm.saveItemUnitLocation(itemUnit.single_location_mode_data)"
+                                ng-model-options="{
+                                   updateOn: 'default blur',
+                                   debounce: {
+                                     'default': 500,
+                                     'blur': 0
+                                   }
+                                }"
+                            >
+                            </md-checkbox>
+
+                        </td>
+
+                    </tr>
+
+                    <tr ng-if="item.units.length == 0 && item.is_expanded">
+
+                        <td colspan="4" style="color: #A7A9AC;">
+                            This item has no units set for chosen location.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </md-data-table-container>
+
+        <md-data-table-pagination
+            ng-if="vm.pagination.total_items > vm.pagination.limit"
+            md-limit="vm.pagination.limit"
+            md-page="vm.pagination.page_no"
+            md-total="{{ vm.pagination.total_items }}"
+            md-row-select="vm.paginationLimits"
+            md-trigger="vm.onPaginationChangeCallback">
+        </md-data-table-pagination>
+
+    </peach-card-content>
+
+</peach-card>

@@ -1,0 +1,556 @@
+<style>
+  
+    #page_frame input[type='number'] {
+      -moz-appearance: textfield !important;
+    }
+
+    #page_frame input::-webkit-outer-spin-button,
+    #page_frame input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+    }
+
+    #page_frame md-input-container.md-default-theme:not(.md-input-focused) input.md-input.ng-invalid.ng-invalid-required {
+        border-color: #F44336 !important;
+        padding-bottom: 1px;
+    }
+
+    #page_frame md-datepicker .md-datepicker-input-container {
+        width: calc(100% - 90px) !important;
+    }
+    
+    /*#page_frame .custom-input-parent md-datepicker .md-button.md-icon-button:first-child {
+        width: 24px;
+    }
+    
+    #page_frame .custom-input-parent md-datepicker .md-button:not([disabled]).md-focused {
+        background-color: transparent !important;
+    }*/
+
+    #page_frame .md-caption {
+        color: #a7a9ac;
+    }
+
+    #page_frame .md-caption.fake-label {
+        margin-bottom: -6px;
+    }
+
+    #page_frame .text-right {
+        text-align: end;
+    }
+
+    #page_frame .count-item {
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    #page_frame .count-item .count-item-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    #page_frame .count-item .count-item-unit {
+        margin-bottom: 5px;
+    }
+
+    #page_frame .count-item md-input-container {
+        padding-bottom: 2px !important;
+    }
+
+    #page_frame .count-item .form-text {
+        line-height: 32px;
+    }
+
+    #page_frame section peach-card:first-child md-card {
+        margin-top: 0px;
+    }
+    
+    @media (max-width: 599px) {
+        #page_frame .flex-sm-100.custom-input-parent {
+            margin-top: 20px;
+        }
+    }
+    
+    /* md-checkbox peach v2 custom styles start here */
+    #page_frame md-checkbox {
+        margin: 10px 10px 10px 20px;
+        padding: 0px 0px 0px 20px;
+    }
+
+    #page_frame table md-checkbox {
+        margin: 0px 10px 0px 20px !important;
+    }
+
+    #page_frame md-checkbox .md-container {
+        width: 30px;
+        height: 30px;
+    }
+
+    #page_frame md-checkbox .md-container {
+        width: 30px;
+        height: 30px;
+    }
+
+    #page_frame md-checkbox .md-container .md-icon {
+        width: 30px;
+        height: 30px;
+        border: 0px;
+        background-color: #b1b3b5;
+    }
+
+    #page_frame md-checkbox:not([disabled]) .md-container .md-icon {
+        background-color: #e5e5e5;
+    }
+
+    #page_frame md-checkbox .md-label:not(:empty) {
+        margin-left: 30px;
+    }
+
+    #page_frame md-checkbox .md-container:after {
+        top: -10px;
+        right: -20px;
+        bottom: -10px;
+        left: -20px;
+    }
+
+    #page_frame md-checkbox:not([disabled]).md-checked .md-container .md-icon {
+        background-color: #2E98CC;
+    }
+
+    #page_frame md-checkbox.md-checked .md-icon:after {
+        left: 12px;
+        top: 7px;
+        width: 7px;
+        height: 14px;
+        border-width: 3px;
+    }
+    /* md-checkbox peach v2 custom styles end here */
+
+</style>
+
+<peach-location-alert></peach-location-alert>
+
+<peach-modal loading="vm.blockers.initializing">
+
+    <peach-modal-header on-close="vm.forms.editCountForm.$invalid || vm.forms.countItemsForm.$invalid ? vm.goBack() : vm.closeModal();">
+
+        <div layout="row" flex="initial" layout-wrap layout-align="start center">
+
+            <div flex-gt-sm="initial" flex-sm="100">
+
+                <h1>{{ vm.editingPreviouslyCreatedCount ? 'Edit Count' : 'Add Count' }}</h1>
+
+            </div>
+
+            <div ng-if="vm.editedCount.data.id && !vm.editedCount.data.is_complete" flex-gt-sm="initial" flex-sm="100">
+
+                <cake-progress-linear show-label="true" show-value="true" mode="determinate" value="vm.editedCount.percentage"></cake-progress-linear>
+
+            </div>
+
+        </div>
+
+    </peach-modal-header>
+
+    <peach-modal-content>
+
+        <!-- new count message -->
+        <peach-message ng-if="!vm.editedCount.data.id && vm.canEditCount" type="info" dismissible="add_count_info_displayed">
+            Once you select the Count Group and Date choose the "Continue" option to start counting.
+        </peach-message>
+
+        <!-- starting count message -->
+        <peach-message ng-if="vm.editedCount.data.id && vm.editedCount.is_opening_count && vm.canEditCount && !vm.editedCount.was_complete" type="info" dismissible="starting_count_info_displayed">
+            This is your first Count for Count Group '{{ ::vm.editedCount.parent_group.name }}'. In order to accurately calculate your inventory value please enter a starting cost for all your entered item units.
+        </peach-message>
+
+        <!-- completed count message -->
+        <peach-message ng-if="vm.editedCount.data.id && vm.editedCount.was_complete && vm.editedCount.data.is_complete && vm.canEditCount" type="info" dismissible="completed_count_info_displayed">
+            To edit this previously completed count uncheck the "Count Complete" checkbox. Edits to completed counts will affect past count values.
+        </peach-message>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{vm.userInfo.type}}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <!-- new count initial form -->
+        <peach-card ng-if="!vm.editedCount.data.id">
+
+            <peach-card-content>
+
+                <ng-form name="vm.forms.countForm" novalidate layout="column" flex>
+
+                    <div layout="row" flex layout-align="start center" layout-wrap class="md-padding">
+
+                        <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.editedCount.form_data.count_group_id}">
+
+                            <label>Count Group</label>
+
+                            <md-select
+                                name="countGroup"
+                                ng-model="vm.editedCount.form_data.count_group_id"
+                                aria-label="Count Group"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditCount"
+                                ng-change="vm.validateDate('countForm');"
+                                required
+                            >
+                                <md-option ng-repeat="countGroup in vm.countGroups | filter: {is_active: true}" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                            </md-select>
+
+                            <div ng-messages="vm.forms.countForm.countGroup.$error" ng-if="vm.forms.countForm.countGroup.$invalid && vm.forms.countForm.countGroup.$dirty">
+                                <div ng-message="required">Please select count group</div>
+                            </div>
+
+                        </md-input-container>
+
+                        <div flex-gt-sm="50" flex-sm="100" class="custom-input-parent">
+                        
+                            <div ng-if="vm.editedCount.form_data.date" layout="row" flex class="md-caption fake-label">
+                                Count Date
+                            </div>
+
+                            <md-datepicker
+                                name="countDate"
+                                ng-model="vm.editedCount.form_data.date"
+                                md-placeholder="Count Date"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditCount || !vm.editedCount.form_data.count_group_id"
+                                required
+                            ></md-datepicker>
+
+                            <div ng-messages="vm.forms.countForm.countDate.$error" ng-if="vm.forms.countForm.countDate.$invalid && vm.forms.countForm.countDate.$dirty">
+                                <div ng-message="required">Please select a date for this count.</div>
+                                <div ng-message="unique">There is already a count for this count group and date.</div>
+                                <div ng-message="is_date">Invalid date.</div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </ng-form>
+
+            </peach-card-content>
+
+        </peach-card>
+
+        <!-- edited count form -->
+        <peach-card ng-if="vm.editedCount.data.id">
+
+            <peach-card-content>
+
+                <ng-form name="vm.forms.editCountForm" novalidate layout="column" flex>
+
+                    <div layout="row" flex layout-align="start center" layout-wrap class="md-padding">
+
+                        <div flex-gt-sm="33" flex-sm="100">
+
+                            <div layout="row" flex class="md-caption">
+                                Count Group
+                            </div>
+
+                            <div layout="row" flex style="margin-top: 5px;">
+                                {{ ::vm.editedCount.parent_group.name }}
+                            </div>
+
+                        </div>
+
+                        <div ng-if="vm.canEditCount && !vm.editedCount.data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+                        
+                            <div ng-if="vm.editedCount.form_data.date" layout="row" flex class="md-caption fake-label">
+                                Count Date
+                            </div>
+
+                            <md-datepicker
+                                name="countDate"
+                                ng-model="vm.editedCount.form_data.date"
+                                md-placeholder="Count Date"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditCount || !vm.editedCount.form_data.count_group_id"
+                                required
+                            ></md-datepicker>
+
+                            <div ng-messages="vm.forms.editCountForm.countDate.$error" ng-if="vm.forms.editCountForm.countDate.$invalid && vm.forms.editCountForm.countDate.$dirty">
+                                <div ng-message="required">Please select a date for this count.</div>
+                                <div ng-message="unique">There is already a count for this count group and date.</div>
+                                <div ng-message="is_date">Invalid date.</div>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="!vm.canEditCount || vm.editedCount.data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+
+                            <div layout="row" flex class="md-caption">
+                                Count Date
+                            </div>
+
+                            <div layout="row" flex style="margin-top: 5px;">
+                                {{ ::vm.editedCount.data.formatted_date }}
+                            </div>
+
+                        </div>
+
+                        <div ng-if="vm.canEditCount && vm.editedCount.was_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+
+                            <md-checkbox
+                                name="countIsComplete"
+                                ng-model="vm.editedCount.form_data.is_complete"
+                                aria-label="Count Complete"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditCount"
+                                ng-change="vm.toggleCountIsComplete();"
+                                class="md-primary"
+                            >
+                                Count Complete
+                            </md-checkbox>
+
+                        </div>
+
+                    </div>
+
+                </ng-form>
+
+            </peach-card-content>
+
+        </peach-card>
+
+        <!-- edited count items -->
+        <section ng-if="vm.editedCount.data.id && !vm.editedCount.data.is_complete && vm.canEditCount">
+
+            <ng-form name="vm.forms.countItemsForm" novalidate>
+     
+                <peach-card ng-repeat="(groupName, data) in vm.editedCount.items_data" ng-if="data.items.length > 0" can-collapse="true" is-open="{{ $first }}">
+
+                    <peach-card-header title="{{ ::groupName }}">
+                    </peach-card-header>
+
+                    <peach-card-content>
+
+                        <div layout="row" flex layout-wrap hide-sm class="md-padding count-item">
+
+                            <div flex="20" class="count-item-name form-text">
+
+                                Item
+
+                            </div>
+
+                            <div flex="75" flex-offset-gt-sm="5">
+
+                                <div layout="row" flex layout-wrap class="count-item-unit">
+                                    
+                                    <div flex class="count-item-name form-text">
+        
+                                        Quantity
+        
+                                    </div>
+        
+                                </div>
+        
+                            </div>
+
+                        </div>
+
+                        <div ng-repeat="item in data.items" layout="row" flex layout-wrap class="md-padding count-item">
+
+                            <div flex-gt-sm="20" flex-sm="100" class="count-item-name form-text">
+
+                                {{ ::item.name }}
+
+                            </div>
+
+                            <div flex-gt-sm="75" flex-sm="100" flex-offset-gt-sm="5">
+
+                                <div ng-repeat="itemUnit in item.units_data" layout="row" layout-align="start center" flex layout-wrap class="count-item-unit">
+
+                                    <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                        Count quantity
+                                    </div>
+                                    
+                                    <div flex-gt-sm="45" flex-sm="100" layout="row" layout-align="start center" layout-wrap>
+
+                                        <md-input-container md-no-float flex>
+
+                                            <input type="number" min="-999999999.99999" max="999999999.99999" step="0.00001" ng-pattern="vm.cakeFloatPattern" ng-model="itemUnit.new_quantity_value" ng-blur="vm.saveQuantity(itemUnit.id);" ng-disabled="!vm.canEditCount" class="text-right" aria-label="Count quantity" placeholder="Count quantity" />
+
+                                        </md-input-container>
+
+                                        <div flex flex-offset="5" class="form-text">
+
+                                            {{ ::itemUnit.count_label }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div ng-if="item.starting_cost_updateable" flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                        Cost
+                                    </div>
+
+                                    <div ng-if="item.starting_cost_updateable" flex-gt-sm="45" flex-sm="100" flex-offset-gt-sm="5" layout="row" layout-align="start center" layout-wrap>
+
+                                        <div class="form-text">
+
+                                            $
+                                            
+                                        </div>
+
+                                        <md-input-container md-no-float flex flex-offset="5">
+
+                                            <input type="number" cake-number-input-formatted round="2" min="0" max="999999999.99999" step="0.00001" ng-model="itemUnit.new_cost_value" ng-blur="vm.saveCost(itemUnit.id);" ng-disabled="!vm.canEditCount" ng-readonly="itemUnit.new_quantity_value == null" class="text-right" aria-label="Cost" placeholder="Cost" ng-required="itemUnit.new_quantity_value" />
+
+                                        </md-input-container>
+
+                                        <div flex flex-offset="5" class="form-text">
+
+                                            {{ ::itemUnit.cost_label }}
+                                            
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </peach-card-content>
+
+                </peach-card>
+
+                <div layout="row" flex>
+
+                    <md-input-container flex>
+
+                        <label>Comment</label>
+
+                        <input type="text" name="countNotes" type="text" ng-model="vm.editedCount.form_data.notes" ng-disabled="vm.blockers.api_processing || !vm.canEditCount" aria-label="Comment" maxlength="512" ng-maxlength="512" />
+                    
+                    </md-input-container>
+
+                </div>
+
+            </ng-form>
+
+        </section>
+
+        <!-- completed count count items -->
+        <section ng-if="vm.editedCount.data.id && (vm.editedCount.data.is_complete || !vm.canEditCount)">
+     
+            <peach-card ng-repeat="(groupName, data) in vm.editedCount.items_data" ng-if="data.counted_items.length > 0" can-collapse="true" is-open="{{ $first }}">
+
+                <peach-card-header title="{{ ::groupName }}">
+                </peach-card-header>
+
+                <peach-card-content>
+
+                    <div layout="row" flex layout-wrap hide-sm class="md-padding count-item">
+
+                        <div flex="20" class="count-item-name form-text">
+
+                            Item
+
+                        </div>
+
+                        <div flex="75" flex-offset-gt-sm="5">
+
+                            <div layout="row" flex layout-wrap class="count-item-unit">
+                                
+                                <div flex flex-offset="35" class="count-item-name form-text">
+
+                                    Quantity
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div ng-repeat="item in data.counted_items" layout="row" flex layout-wrap class="md-padding count-item">
+
+                        <div flex-gt-sm="20" flex-sm="100" class="count-item-name form-text">
+
+                            {{ ::item.name }}
+
+                        </div>
+
+                        <div flex-gt-sm="75" flex-sm="100" flex-offset-gt-sm="5">
+
+                            <div ng-repeat="itemUnit in item.units_data" ng-if="itemUnit.count_object" layout="row" flex layout-wrap class="count-item-unit">
+                                
+                                <div flex="30" class="form-text text-right">
+
+                                    {{ ::itemUnit.new_quantity_value }}
+
+                                </div>
+
+                                <div flex flex-offset="5" class="form-text">
+
+                                    {{ ::itemUnit.count_label }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </peach-card-content>
+
+            </peach-card>
+
+            <div ng-if="vm.editedCount.form_data.notes" layout="row" flex>
+
+                <div layout="column" flex>
+
+                    <div flex class="md-caption">
+                    
+                        Commment
+
+                    </div>
+
+                    <div flex>
+                    
+                        {{ ::vm.editedCount.form_data.notes }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section ng-if="!vm.editedCount.data.is_complete && vm.editedCount.update_timestamp">
+                
+            <div layout="row" layout-align="end center">
+
+                <span class="md-caption font-disabled">
+                    
+                    {{ vm.editedCount.update_timestamp }}
+
+                </span>
+
+            </div>
+
+        </section>
+
+    </peach-modal-content>
+
+    <peach-modal-footer loading="vm.blockers.api_processing">
+
+        <md-button ng-if="vm.editedCount.data.id && vm.canEditCount && !vm.editedCount.data.is_complete" class="md-raised md-warn has-progress" ng-disabled="vm.blockers.api_processing" ng-click="vm.confirmDeleteCount($event);" aria-label="Delete">Delete</md-button>
+
+        <span flex></span>
+
+        <md-button ng-if="!vm.editedCount.data.id" class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Cancel">Cancel</md-button>
+
+        <md-button ng-if="vm.editedCount.data.is_complete" class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Close">Close</md-button>
+
+        <md-button ng-if="vm.editedCount.data.id && vm.canEditCount && !vm.editedCount.data.is_complete" hide-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.editCountForm.$invalid || vm.forms.countItemsForm.$invalid" ng-click="vm.confirmSaveCount($event);" aria-label="Save & close">Save & close</md-button>
+
+        <md-button ng-if="vm.editedCount.data.id && vm.canEditCount && !vm.editedCount.data.is_complete" hide-gt-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.editCountForm.$invalid || vm.forms.countItemsForm.$invalid" ng-click="vm.confirmSaveCount($event);" aria-label="Save">Save</md-button>
+
+        <md-button ng-if="!vm.editedCount.data.id && vm.canEditCount" class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.countForm.$invalid" ng-click="vm.createCount();" aria-label="{{ vm.forms.countForm.$invalid ? 'Select a group and date to continue' : 'Continue' }}">Continue</md-button>
+
+    </peach-modal-footer>
+
+</peach-modal>

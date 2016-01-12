@@ -1,8 +1,9 @@
 
 class IntroController {
-  constructor($scope, $location, $log, $peach, $q, $window, commonService, cakeCounts,
+  constructor($scope, $location, $log, $peach, $q, $window, cakeCommon, cakeCounts,
               cakeItems, cakeActiveLocations, cakeSharedData, cakeInvoices, cakeSettings,
               cakeVendors) {
+
     /** Items settings page
      * Inventory items management page
      * @author Radoslaw Wrzesien
@@ -347,8 +348,7 @@ class IntroController {
 }
 
 IntroController.$inject = ['$scope', '$location', '$log', '$peach', '$q', '$window',
-                           'commonService', 'countsService', 'itemsService',
-                           'activeLocationsService', 'sharedDataService', 'invoicesService',
-                           'settingsService', 'vendorsService'];
+                           'cakeCommon', 'cakeCounts', 'cakeItems', 'cakeActiveLocations',
+                           'cakeSharedData', 'cakeInvoices', 'cakeSettings', 'cakeVendors'];
 
 export default IntroController;

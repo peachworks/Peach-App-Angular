@@ -1,0 +1,824 @@
+<style>
+  
+    #page_frame input[type='number'] {
+        -moz-appearance: textfield !important;
+    }
+
+    #page_frame input::-webkit-outer-spin-button,
+    #page_frame input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+    }
+
+    .md-select-custom-link {
+        color: #2E98CC;
+        text-transform: uppercase;
+        text-align: center;
+        border-top: 1px solid #e5e5e5;
+    }
+
+    .md-select-custom-link .md-text {
+        width: 100%;
+    }
+
+    #page_frame .icon-lock, #page_frame .icon-pencil, #page_frame .icon-eye, #page_frame .icon-star, #page_frame .icon-not-visible {
+        font-size: 25px;
+        line-height: 25px;
+        width: 25px;
+        height: 25px;
+        color: #2E98CC;
+    }
+
+    #page_frame table .icon-x {
+        font-size: 16px;
+        line-height: 16px;
+        width: 16px;
+        height: 16px;
+        color: #2E98CC;
+    }
+    
+    #page_frame table[md-data-table] md-checkbox {
+        margin: 0px;
+        margin-left: -4px;
+        padding: 0px 0px 0px 14px;
+    }
+
+    #page_frame #vendor_products tbody tr td,
+    #page_frame #vendor_products tbody th td {
+        padding-left: 14px;
+        padding-right: 14px;
+    } 
+
+    #page_frame #vendor_products tbody tr td.last-cost-currency {
+        padding-right: 0px;
+    }
+
+    #page_frame #vendor_products tbody tr td.last-cost-number {
+        padding-left: 0px;
+    }
+  
+</style>
+
+<peach-modal loading="vm.blockers.initializing">
+
+    <peach-modal-header on-close="vm.goBack();">
+
+        <form name="vm.forms.itemForm" novalidate="true" autocomplete="off">
+
+            <md-input-container flex>
+
+                <label>Item Name</label>
+
+                <input
+                    type="text"
+                    name="itemName"
+                    class="modal-header-input"
+                    ng-model="vm.editedItem.form_data.name"
+                    ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                    ng-change="vm.nameChangeCallback();"
+                    ng-blur="vm.nameBlurCallback();"
+                    aria-label="Item Name"
+                    ng-maxlength="200"
+                    ng-readonly="vm.blockers.api_processing || !vm.canEditItem"
+                    required />
+                <div ng-messages="vm.forms.itemForm.itemName.$error" ng-if="vm.forms.itemForm.itemName.$invalid && vm.forms.itemForm.itemName.$dirty">
+                    <div ng-message="required">You have to specify a name</div>
+                    <div ng-message="duplicate">Name already exists</div>
+                    <div ng-message="maxlength">Name can't be longer than 200 characters</div>
+                </div>
+
+            </md-input-container>
+
+        </form>
+
+    </peach-modal-header>
+
+    <peach-modal-content>
+
+        <md-tabs md-selected="vm.selectedIndex" md-center-tabs="false" md-dynamic-height md-border-bottom>
+        
+            <md-tab ng-repeat="tab in vm.tabs.availableTabs" label="{{ tab.title }}" ng-if="tab.visible" md-on-deselect="tab.deselectCallback();">
+                <md-content layout class="md-padding" ng-include src="tab.template">
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+
+    </peach-modal-content>
+
+    <peach-modal-footer loading="vm.blockers.api_processing">
+
+        <md-button ng-if="vm.editedItem.data.id && vm.canDeleteItem" class="md-raised md-warn has-progress" ng-disabled="vm.blockers.api_processing" ng-click="vm.confirmDeleteItem();" aria-label="Delete">Delete</md-button>
+
+        <span flex></span>
+
+        <md-button class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Cancel">Cancel</md-button>
+
+        <md-button ng-if="vm.editedItem.data.id && vm.canEditItem" hide-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.itemForm.$invalid || vm.forms.itemDetailsForm.$invalid" ng-click="vm.saveItem();" aria-label="Save Changes">Save Changes</md-button>
+        
+        <md-button ng-if="vm.editedItem.data.id && vm.canEditItem" hide-gt-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.itemForm.$invalid || vm.forms.itemDetailsForm.$invalid" ng-click="vm.saveItem();" aria-label="Save Changes">Save</md-button>
+
+    </peach-modal-footer>
+
+</peach-modal>
+
+<!-- -------------------- ITEM INFO TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="itemInfoTabTemplate">
+
+    <div layout="column" flex ng-form="vm.forms.itemDetailsForm">
+
+        <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <div layout="row" flex layout-wrap>
+
+            <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.editedItem.form_data.gl_account_id}">
+
+                <label>Category</label>
+
+                <md-select
+                    name="itemCategory"
+                    ng-model="vm.editedItem.form_data.gl_account_id"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditItem"
+                    aria-label="Category"
+                    required
+                >
+                    <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                </md-select>
+
+                <div ng-messages="vm.forms.itemDetailsForm.itemCategory.$error" ng-if="vm.forms.itemDetailsForm.itemCategory.$invalid && vm.forms.itemDetailsForm.itemCategory.$dirty">
+                    <div ng-message="required">You have to specify a category.</div>
+                </div>
+
+            </md-input-container>
+
+            <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.editedItem.form_data.count_group_id}">
+
+                <label>Count Group</label>
+
+                <md-select
+                    name="itemCountGroup"
+                    ng-model="vm.editedItem.form_data.count_group_id"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditItem"
+                    aria-label="Count Group"
+                    required
+                >
+                    <md-option ng-repeat="countGroup in vm.countGroups | filter: countGroupsFilter" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                </md-select>
+
+                <div ng-messages="vm.forms.itemDetailsForm.itemCountGroup.$error" ng-if="vm.forms.itemDetailsForm.itemCountGroup.$invalid && vm.forms.itemDetailsForm.itemCountGroup.$dirty">
+                    <div ng-message="required">You have to specify a count group.</div>
+                </div>
+
+            </md-input-container>
+
+        </div>
+
+        <div layout="row" flex layout-wrap>
+
+            <div layout="row" flex-gt-sm="50" flex-sm="100">
+
+                <md-input-container flex ng-class="{'md-input-has-value': vm.editedItem.form_data.common_unit_id}">
+
+                    <label>Common Unit</label>
+
+                    <md-select
+                        name="itemCommonUnit"
+                        ng-model="vm.editedItem.form_data.common_unit_id"
+                        ng-disabled="vm.blockers.api_processing || !vm.canChangeCommonUnit"
+                        ng-change="vm.changeCommonUnit();"
+                        aria-label="Common Unit"
+                        required
+                    >
+                        <md-option ng-repeat="unit in vm.units" value="{{ ::unit.id }}">{{ ::unit.name }}</md-option>
+                    </md-select>
+
+                    <div ng-messages="vm.forms.itemDetailsForm.itemCommonUnit.$error" ng-if="vm.forms.itemDetailsForm.itemCommonUnit.$invalid && vm.forms.itemDetailsForm.itemCommonUnit.$dirty">
+                        <div ng-message="required">You have to specify a common unit.</div>
+                    </div>
+
+                </md-input-container>
+
+                <md-button ng-if="!vm.canChangeCommonUnit" class="md-icon-button md-primary md-noink" title="Locked" aria-label="Locked" disabled="disabled" >
+                    <md-icon md-font-icon="icon-lock" aria-label="Locked"></md-icon>
+                </md-button>
+
+                <div ng-if="vm.canChangeCommonUnit" flex="initial"></div> <!-- this empty div prevents from prev md-inpu-container being a last child in element - this has impact on styles (padding) -->
+
+            </div>
+
+            <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.editedItem.form_data.reporting_unit_key}">
+
+                <label>Reporting Unit</label>
+
+                <md-select
+                    name="itemReportingUnit"
+                    ng-model="vm.editedItem.form_data.reporting_unit_key"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditItem"
+                    ng-change="vm.changeReportingUnit();"
+                    aria-label="Reporting Unit"
+                    required
+                >
+                    <md-option ng-repeat="reportingUnit in vm.editedItem.units.available_reporting_units" value="{{ ::reportingUnit.reporting_unit_key }}">{{ ::reportingUnit.reporting_name }}</md-option>
+                </md-select>
+
+                <div ng-messages="vm.forms.itemDetailsForm.itemReportingUnit.$error" ng-if="vm.forms.itemDetailsForm.itemReportingUnit.$invalid && vm.forms.itemDetailsForm.itemReportingUnit.$dirty">
+                    <div ng-message="required">You have to specify a reporting unit.</div>
+                </div>
+
+            </md-input-container>
+
+        </div>
+
+        <div ng-if="vm.editedItem.locations.data_array.length == 1" layout="row" flex layout-wrap>
+
+            <div layout="column" flex-gt-sm="50" flex-sm="100">
+
+                <div layout="row" flex class="md-caption">
+                    Starting cost
+                </div>
+
+                <div layout="row" flex style="margin-top: 5px;">
+                    $ {{ ::vm.editedItem.locations.data_array[0]['starting_cost'] }} {{ ::vm.editedItem.locations.data_array[0]['cost_additional_label'] }}
+                </div>
+
+            </div>
+
+            <div layout="column" flex-gt-sm="50" flex-sm="100">
+
+                <div layout="row" flex class="md-caption">
+                    Last cost
+                </div>
+
+                <div layout="row" flex style="margin-top: 5px;">
+
+                     $ {{ ::vm.editedItem.locations.data_array[0]['last_cost'] }} {{ ::vm.editedItem.locations.data_array[0]['cost_additional_label'] }}
+
+                </div>
+
+            </div>
+           
+        </div>
+
+        <div layout="row" flex layout-wrap>
+
+            <md-switch name="itemIsActive" class="md-primary" ng-model="vm.editedItem.form_data.is_active" ng-disabled="vm.blockers.api_processing || !vm.canEditItem" aria-label="Active">
+                Active
+            </md-switch>
+
+        </div>
+
+        <div ng-if="vm.editedItem.data.item_db_id" layout="row" flex layout-wrap layout-align="start center">
+
+            <span>
+                Added from PW item
+            </span>
+
+            <md-button class="md-primary" aria-label="{{ ::vm.editedItem.data.item_db_id }}" ng-disabled="!vm.editedItem.items_db_item">
+                <span>
+                    {{ ::vm.editedItem.data.item_db_id }}
+                </span>
+                <md-tooltip ng-if="vm.editedItem.items_db_item">
+                    {{ ::vm.editedItem.items_db_item.name }}
+                </md-tooltip>
+            </md-button>
+
+        </div>
+
+    </div>
+                                
+</script>
+
+<!-- -------------------- ITEM LOCATIONS TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="itemLocationsTabTemplate">
+
+    <div layout="column" flex>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <peach-card flex>
+
+            <peach-card-content>
+
+                <md-data-table-container>
+        
+                    <table md-data-table md-row-select="vm.editedItem.locations.checked_locations">
+        
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;" name="Location"></th>
+                                <th style="width: 50%;" name="Last Cost"></th>
+                            </tr>
+                        </thead>
+        
+                        <tbody md-disable-select="!vm.canEditItem">
+                            <tr ng-repeat="itemLocation in vm.editedItem.locations.data_array">
+                                <td>
+                                    {{ ::itemLocation.display_name }}
+                                </td>
+                                <td ng-if="itemLocation.was_checked">
+                                    $ {{ ::itemLocation.last_cost }} {{ ::itemLocation.cost_additional_label }}
+                                </td>
+                                <td ng-if="!itemLocation.was_checked">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </tbody>
+        
+                    </table>
+        
+                </md-data-table-container>
+        
+            </peach-card-content>
+        
+        </peach-card>
+
+    </div>
+
+</script>
+
+<!-- -------------------- ITEM UNITS TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="itemUnitsTabTemplate">
+
+    <div layout="column" flex>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <div layout="row" flex>
+
+            <md-button ng-if="vm.canEditItem" class="md-primary" ng-click="vm.openNewItemUnitForm();" ng-disabled="vm.blockers.api_processing || vm.editedItem.units.new_unit_form.show_form" title="Add unit" aria-label="Add unit">
+                <span>ADD UNIT</span>
+            </md-button>
+
+            <md-button class="md-primary" ng-click="vm.openItemUnitsPage();" ng-disabled="vm.blockers.api_processing" title="Manage all units" aria-label="Manage all units">
+                <span>MANAGE ALL UNITS</span>
+            </md-button>
+
+        </div>
+
+        <div layout="row" flex>
+
+            <peach-card flex>
+
+                <peach-card-content>
+
+                    <md-data-table-container>
+
+                        <table md-data-table>
+
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%;" name="Unit"></th>
+                                    <th style="width: 30%;" name="Conversion"></th>
+                                    <th colspan="2" style="width: 30%;" name="Description"></th>
+                                    <th colspan="2" style="width: 15%;" name=""></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr ng-if="vm.canEditItem && vm.editedItem.units.new_unit_form.show_form" ng-form="vm.forms.newItemUnitForm">
+
+                                    <td>
+                                        
+                                        <md-input-container flex md-no-float ng-class="{'md-input-has-value': vm.editedItem.units.new_unit_form.unit_id}">
+                                            <md-select
+                                                name="itemUnitUnit"
+                                                ng-model="vm.editedItem.units.new_unit_form.unit_id"
+                                                ng-change="vm.autoCalculateConversionForNewUnit();"
+                                                ng-disabled="!vm.canEditItem || vm.blockers.api_processing"
+                                                aria-label="Unit"
+                                                placeholder="Unit"
+                                                required
+                                            >
+                                                <md-option ng-repeat="unit in vm.editedItem.units.new_unit_form.available_units" value="{{ ::unit.id }}">{{ ::unit.name }}</md-option>
+                                            </md-select>
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input
+                                                type="number"
+                                                cake-unique-item-unit="editedItem.units.new_unit_form"
+                                                cake-unique-item-unit-controller="vm"
+                                                step="0.00001"
+                                                min="0"
+                                                max="999999999.99999"
+                                                ng-pattern="vm.cakeFloatPattern"
+                                                name="itemUnitQuantity"
+                                                ng-model="vm.editedItem.units.new_unit_form.unit_quantity"
+                                                aria-label="Conversion"
+                                                ng-readonly="vm.blockers.api_processing"
+                                                ng-disabled="vm.editedItem.units.new_unit_form.disable_conversion || !vm.editedItem.units.new_unit_form.unit_id || !vm.canEditItem"
+                                                placeholder="Conversion"
+                                                required />
+                                            <div ng-messages="vm.forms.newItemUnitForm.itemUnitQuantity.$error" ng-if="vm.forms.newItemUnitForm.itemUnitQuantity.$invalid && vm.forms.newItemUnitForm.itemUnitQuantity.$dirty">
+                                                <div ng-message="required">Please provide a conversion</div>
+                                                <div ng-message="number">This is not a valid number</div>
+                                                <div ng-message="unique">There is already item unit like this</div>
+                                            </div>
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td colspan="2">
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input type="text" name="itemUnitDescription" ng-model="vm.editedItem.units.new_unit_form.description" ng-disabled="!vm.editedItem.units.new_unit_form.unit_id || !vm.canEditItem" aria-label="Description" ng-maxlength="200" ng-readonly="vm.blockers.api_processing" placeholder="Description" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-button class="md-primary" ng-click="vm.addNewItemUnit();" ng-disabled="!vm.canEditItem || vm.blockers.api_processing || vm.forms.newItemUnitForm.$invalid" title="Add" aria-label="Add">
+                                            <span ng-if="!vm.blockers.api_processing">ADD</span>
+                                            <md-progress-circular ng-if="vm.blockers.api_processing" md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                                        </md-button>
+                                        
+                                    </td>
+                                    
+                                    <td>
+                                        
+                                        <md-button ng-click="vm.closeNewItemUnitForm();" class="md-icon-button md-primary" title="Cancel" aria-label="Cancel">
+                                            <md-icon md-font-icon="icon-x" aria-label="Cancel"></md-icon>
+                                        </md-button>
+
+                                    </td>
+
+                                </tr>
+                                <tr ng-repeat="itemUnit in vm.editedItem.units.data_array">
+
+                                    <td>
+                                        {{ ::itemUnit.name }}
+                                        <md-icon ng-if="itemUnit.is_wv_conversion" md-font-icon="icon-star" aria-label="This is weight/volume conversion unit" title="This is weight/volume conversion unit"></md-icon>
+                                    </td>
+
+                                    <td>
+                                        {{ ::itemUnit.conversion_label }}
+                                        {{ itemUnit.is_common_unit ? "(common)" : "" }}
+                                    </td>
+
+                                    <td ng-if="!itemUnit.edit_description" style="width: 20%;">
+
+                                        {{ ::itemUnit.description }}
+                                        {{ itemUnit.is_common_unit ? "(common)" : "" }}
+
+                                    </td>
+                                    <td ng-if="!itemUnit.edit_description" style="width: 10%;">
+
+                                        <md-button ng-if="!itemUnit.is_common_unit && vm.canEditItem" ng-click="vm.closeNewItemUnitForm(); itemUnit.edit_description = !itemUnit.edit_description;" ng-disabled="vm.blockers.api_processing" class="md-icon-button md-primary" title="Edit description" aria-label="Edit description">
+                                            <md-icon md-font-icon="icon-pencil" aria-label="Edit description"></md-icon>
+                                        </md-button>
+
+                                    </td>
+                                    <td ng-if="!itemUnit.is_common_unit && itemUnit.edit_description && vm.canEditItem" colspan="2" ng-form="itemUnitDescriptionForm">
+
+                                        <md-input-container md-no-float flex>
+                                            <input type="text" name="itemUnitDescription" ng-model="itemUnit.editable_description" cake-autofocus="itemUnit.edit_description" ng-change="vm.updateItemUnitDescription(itemUnit.id);" ng-blur="vm.updateItemUnitDescription(itemUnit.id, true);" ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}" aria-label="Description" ng-maxlength="200" ng-readonly="vm.blockers.api_processing" placeholder="Description" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td colspan="2">
+
+                                        <md-button ng-if="itemUnit.is_common_unit && !vm.canChangeCommonUnit" class="md-icon-button md-primary" title="Locked" aria-label="Locked" disabled="disabled">
+                                            <md-icon md-font-icon="icon-lock" aria-label="Locked"></md-icon>
+                                        </md-button>
+
+                                        <md-button ng-if="!itemUnit.is_common_unit && vm.canEditItem && itemUnit.can_be_deleted" ng-click="vm.deleteItemUnit(itemUnit.id);" ng-disabled="vm.blockers.api_processing" class="md-icon-button md-primary" title="Delete unit" aria-label="Delete unit">
+                                            <md-icon md-font-icon="icon-x" aria-label="Delete unit"></md-icon>
+                                        </md-button>
+
+                                        <!--<md-button ng-if="!itemUnit.is_common_unit && vm.canEditItem && !itemUnit.can_be_deleted && !itemUnit.is_hidden" ng-click="vm.hideItemUnit(itemUnit.id);" ng-disabled="vm.blockers.api_processing" class="md-icon-button md-primary" title="Hide unit in all locations" aria-label="Hide unit in all locations">
+                                            <md-icon md-font-icon="icon-eye" aria-label="Hide"></md-icon>
+                                        </md-button>
+
+                                        <md-button ng-if="!itemUnit.is_common_unit && vm.canEditItem && !itemUnit.can_be_deleted && itemUnit.is_hidden" class="md-icon-button md-primary" title="Hidden in all locations" aria-label="Hidden in all locations" disabled="disabled" >
+                                            <md-icon md-font-icon="icon-not-visible" aria-label="Hidden"></md-icon>
+                                        </md-button>-->
+
+                                    </td>
+
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </md-data-table-container>
+
+                </peach-card-content>
+
+            </peach-card>
+
+        </div>
+
+    </div>
+
+</script>
+
+<!-- -------------------- ITEM VENDORS TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="itemVendorsTabTemplate">
+
+    <div layout="column" flex>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <div layout="row" flex>
+
+            <md-button ng-if="vm.canEditItem" class="md-primary" ng-click="vm.openNewItemVendorForm();" ng-disabled="vm.blockers.api_processing || vm.editedItem.vendors.new_vendor_form.show_form" title="Add vendor product" aria-label="Add vendor product">
+                <span>ADD VENDOR PRODUCT</span>
+            </md-button>
+
+        </div>
+
+        <div layout="row" flex>
+
+            <peach-card flex>
+
+                <peach-card-content>
+
+                    <md-data-table-container>
+
+                        <table md-data-table id="vendor_products">
+
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;" name="Vendor"></th>
+                                    <th style="width: 15%;" name="Unit Description"></th>
+                                    <th style="width: 20%;" name="Vendor Description"></th>
+                                    <th style="width: 15%;" name="Vendor Code"></th>
+                                    <th colspan="2" style="width: 20%;" name="Last Cost"></th>
+                                    <th colspan="2" style="width: 15%;" name=""></th>
+                                </tr>
+                            </thead>
+
+                            <tbody ng-if="vm.canEditItem && vm.editedItem.vendors.new_vendor_form.show_form">
+
+                                <tr ng-form="vm.forms.newItemVendorForm">
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex ng-class="{'md-input-has-value': vm.editedItem.vendors.new_vendor_form.vendor_id}">
+                                            <md-select
+                                                name="itemVendorVendor"
+                                                ng-model="vm.editedItem.vendors.new_vendor_form.vendor_id"
+                                                ng-change="vm.checkForDuplicateVendorItem(vm.editedItem.vendors.new_vendor_form, vm.forms.newItemVendorForm);"
+                                                ng-disabled="vm.blockers.api_processing"
+                                                aria-label="Vendor"
+                                                placeholder="Vendor"
+                                                required
+                                            >
+                                                <md-option ng-repeat="vendor in vm.vendors | filter: {is_active: true}" value="{{ ::vendor.id }}">{{ ::vendor.name }}</md-option>
+                                            </md-select>
+
+                                            <div ng-messages="vm.forms.newItemVendorForm.itemVendorVendor.$error" ng-if="vm.forms.newItemVendorForm.itemVendorVendor.$invalid" class="ng-hide">
+                                                <div ng-message="unique">Vendor item has to be unique</div>
+                                            </div>
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex ng-class="{'md-input-has-value': vm.editedItem.vendors.new_vendor_form.inv_item_unit_id}">
+                                            <md-select
+                                                name="itemVendorUnit"
+                                                ng-model="vm.editedItem.vendors.new_vendor_form.inv_item_unit_id"
+                                                ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.new_vendor_form.vendor_id"
+                                                md-on-close="vm.newItemVendorUnitDropdownCallback();"
+                                                aria-label="Unit Description"
+                                                placeholder="Unit Description"
+                                                required
+                                            >
+                                                <md-option ng-repeat="itemUnit in vm.editedItem.units.data_array" value="{{ ::itemUnit.id }}">{{ itemUnit.description ? itemUnit.description : itemUnit.name }}</md-option>
+                                                <!-- custom option which can be used to trigger new unit popup -->
+                                                <md-option class="md-select-custom-link" value="0">Add new Unit</md-option>
+                                            </md-select>
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input type="text" name="itemVendorDescription" ng-model="vm.editedItem.vendors.new_vendor_form.description" aria-label="Vendor Description" ng-maxlength="256" ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.new_vendor_form.vendor_id" placeholder="Vendor Description" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input type="text" name="itemVendorNumber" ng-model="vm.editedItem.vendors.new_vendor_form.number" ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}" ng-change="vm.checkForDuplicateVendorItem(vm.editedItem.vendors.new_vendor_form, vm.forms.newItemVendorForm);" aria-label="Vendor Code" ng-maxlength="256" ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.new_vendor_form.vendor_id" placeholder="Vendor Code" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td class="last-cost-currency">
+                                    
+                                        $
+                                    
+                                    </td>
+
+                                    <td class="last-cost-number">
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input type="number" cake-number-input-formatted name="itemVendorLastCost" min="0" max="999999999.99999" step="0.00001" ng-model="vm.editedItem.vendors.new_vendor_form.last_price" aria-label="Last Cost" ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.new_vendor_form.vendor_id" placeholder="Last Cost" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-button class="md-primary" ng-click="vm.addNewItemVendor();" ng-disabled="vm.blockers.api_processing || vm.forms.newItemVendorForm.$invalid" title="Add" aria-label="Add">
+                                            <span ng-if="!vm.blockers.api_processing">ADD</span>
+                                            <md-progress-circular ng-if="vm.blockers.api_processing" md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                                        </md-button>
+                                        
+                                    </td>
+                                    
+                                    <td>
+                                        
+                                        <md-button ng-click="vm.closeNewItemVendorForm();" class="md-icon-button md-primary" title="Cancel" aria-label="Cancel">
+                                            <md-icon md-font-icon="icon-x" aria-label="Cancel"></md-icon>
+                                        </md-button>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                            <tbody ng-repeat="itemVendor in vm.editedItem.vendors.data_array">
+
+                                <tr ng-if="!itemVendor.is_edited">
+
+                                    <td>
+                                        {{ itemVendor.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ itemVendor.unit_description }}
+                                    </td>
+
+                                    <td>
+                                        {{ itemVendor.description }}
+                                    </td>
+
+                                    <td>
+                                        {{ itemVendor.number }}
+                                    </td>
+
+                                    <td colspan="2">
+                                        $ {{ itemVendor.last_price_formatted }}
+                                    </td>
+
+                                    <td ng-if="vm.canEditItem">
+
+                                        <md-button ng-click="vm.openEditItemVendorForm(itemVendor);" ng-disabled="vm.blockers.api_processing" class="md-icon-button md-primary" title="Edit" aria-label="Edit">
+                                            <md-icon md-font-icon="icon-pencil" aria-label="Edit"></md-icon>
+                                        </md-button>
+                                        
+                                    </td>
+                                    <td ng-if="!vm.canEditItem">
+                                        &nbsp;
+                                    </td>
+                                    
+                                    <td ng-if="vm.canEditItem && itemVendor.can_be_deleted">
+
+                                        <md-button ng-click="vm.deleteItemVendor(itemVendor.id);" ng-disabled="vm.blockers.api_processing" class="md-icon-button md-primary" title="Delete vendor product" aria-label="Delete vendor product">
+                                            <md-icon md-font-icon="icon-x" aria-label="Delete vendor product"></md-icon>
+                                        </md-button>
+
+                                    </td>
+                                    <td ng-if="!vm.canEditItem || !itemVendor.can_be_deleted">
+                                        &nbsp;
+                                    </td>
+
+                                </tr>
+
+                                <tr ng-if="itemVendor.is_edited" ng-form="vm.forms.editItemVendorForm">
+
+                                    <td ng-if="itemVendor.already_used">
+                                        {{ itemVendor.name }}
+                                    </td>
+                                    <td ng-if="!itemVendor.already_used">
+                                        
+                                        <md-input-container md-no-float flex ng-class="{'md-input-has-value': vm.editedItem.vendors.edited_vendor_form_data.vendor_id}">
+                                            <md-select
+                                                name="itemVendorVendor"
+                                                ng-model="vm.editedItem.vendors.edited_vendor_form_data.vendor_id"
+                                                ng-change="vm.checkForDuplicateVendorItem(vm.editedItem.vendors.edited_vendor_form_data, vm.forms.editItemVendorForm);"
+                                                ng-disabled="vm.blockers.api_processing"
+                                                aria-label="Vendor"
+                                                placeholder="Vendor"
+                                                required
+                                            >
+                                                <md-option ng-repeat="vendor in vm.vendors | filter: {is_active: true}" value="{{ ::vendor.id }}">{{ ::vendor.name }}</md-option>
+                                            </md-select>
+
+                                            <div ng-messages="vm.forms.editItemVendorForm.itemVendorVendor.$error" ng-if="vm.forms.editItemVendorForm.itemVendorVendor.$invalid">
+                                                <div ng-message="unique">Vendor item has to be unique</div>
+                                            </div>
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td ng-if="itemVendor.already_used">
+                                        {{ itemVendor.unit_description }}
+                                    </td>
+                                    <td ng-if="!itemVendor.already_used">
+                                        
+                                        <md-input-container md-no-float flex ng-class="{'md-input-has-value': vm.editedItem.vendors.edited_vendor_form_data.inv_item_unit_id}">
+                                            <md-select
+                                                name="itemVendorEditUnit"
+                                                ng-model="vm.editedItem.vendors.edited_vendor_form_data.inv_item_unit_id"
+                                                md-on-close="vm.editedItemVendorUnitDropdownCallback();"
+                                                ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.edited_vendor_form_data.vendor_id"
+                                                aria-label="Unit Description"
+                                                placeholder="Unit Description"
+                                                required
+                                            >
+                                                <md-option ng-repeat="itemUnit in vm.editedItem.units.data_array" value="{{ ::itemUnit.id }}">{{ itemUnit.description ? itemUnit.description : itemUnit.name }}</md-option>
+                                                <!-- custom option which can be used to trigger new unit popup -->
+                                                <md-option class="md-select-custom-link" value="0">Add new Unit</md-option>
+                                            </md-select>
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input type="text" name="itemVendorEditDescription" ng-model="vm.editedItem.vendors.edited_vendor_form_data.description" aria-label="Vendor Description" ng-maxlength="256" ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.edited_vendor_form_data.vendor_id" placeholder="Vendor Description" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td>
+                                        
+                                        <md-input-container md-no-float flex>
+                                            <input type="text" name="itemVendorEditNumber" ng-model="vm.editedItem.vendors.edited_vendor_form_data.number" ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}" ng-change="vm.checkForDuplicateVendorItem(vm.editedItem.vendors.edited_vendor_form_data, vm.forms.editItemVendorForm);" aria-label="Vendor Code" ng-maxlength="256" ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.edited_vendor_form_data.vendor_id" placeholder="Vendor Code" />
+                                        </md-input-container>
+
+                                    </td>
+
+                                    <td colspan="2" ng-if="itemVendor.already_used">
+                                        $ {{ itemVendor.last_price_formatted }}
+                                    </td>
+                                    <td ng-if="!itemVendor.already_used" class="last-cost-currency">
+                                    
+                                        $
+                                    
+                                    </td>
+                                    <td ng-if="!itemVendor.already_used" class="last-cost-number">
+                                        <md-input-container md-no-float flex>
+                                            <input type="number" cake-number-input-formatted name="itemVendorLastCost" min="0" max="999999999.99999" step="0.00001" ng-model="vm.editedItem.vendors.edited_vendor_form_data.new_last_price" aria-label="Last Cost" ng-disabled="vm.blockers.api_processing || !vm.editedItem.vendors.edited_vendor_form_data.vendor_id" placeholder="Last Cost" />
+                                        </md-input-container>
+                                    </td>
+
+                                    <td>
+
+                                        <md-button class="md-primary" ng-click="vm.updateEditedItemVendor();" ng-disabled="vm.blockers.api_processing || vm.forms.editItemVendorForm.$invalid" title="Save" aria-label="Save">
+                                            <span ng-if="!vm.blockers.api_processing">SAVE</span>
+                                            <md-progress-circular ng-if="vm.blockers.api_processing" md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                                        </md-button>
+                                        
+                                    </td>
+                                    
+                                    <td>
+
+                                        <md-button ng-click="vm.closeEditItemVendorForm();" class="md-icon-button md-primary" title="Cancel" aria-label="Cancel">
+                                            <md-icon md-font-icon="icon-x" aria-label="Cancel"></md-icon>
+                                        </md-button>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </md-data-table-container>
+
+                </peach-card-content>
+
+            </peach-card>
+
+        </div>
+
+    </div>
+
+</script>

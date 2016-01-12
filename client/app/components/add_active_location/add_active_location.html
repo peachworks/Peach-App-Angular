@@ -1,0 +1,195 @@
+<peach-modal loading="vm.blockers.initializing">
+
+    <peach-modal-header on-close="vm.goBack();">
+
+        <h1>New Location Setup</h1>
+
+    </peach-modal-header>
+
+    <peach-modal-content>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <section ng-if="vm.inactiveLocations.length > 0" layout="row" layout-wrap ng-form="vm.forms.activateLocationForm">
+
+            <div layout="column" flex="50">
+
+                <md-input-container flex ng-class="{'md-input-has-value': vm.formData.location_id}">
+                    <label>Location</label>
+                    <md-select
+                        name="location"
+                        ng-model="vm.formData.location_id"
+                        ng-disabled="vm.blockers.api_processing || !vm.canEditActiveLocations"
+                        aria-label="Location"
+                        required
+                    >
+                        <md-option ng-repeat="location in vm.inactiveLocations" value="{{ ::location.id }}">{{ ::location.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <div layout="row" flex>
+
+                    <span style="margin: 15px 0px; font-size: 16px; line-height: 24px;">Manual</span>
+                    <md-switch
+                        name="activationMode"
+                        class="md-primary"
+                        ng-model="vm.formData.copy_location"
+                        ng-disabled="vm.blockers.api_processing || !vm.canEditActiveLocations"
+                        aria-label="Copy Existing Location"
+                    >
+                        Copy Existing Location
+                    </md-switch>
+
+                </div>
+
+            </div>
+
+            <div layout="column" flex="100">
+
+                <p flex ng-if="vm.formData.copy_location">
+
+                    With a copy setup, your new location will be assigned all inventory items that are assigned to the location that you are copying from. Additional inventory items can be added and copied items can be removed from the Items Settings page. The copy will also include the count and order units from the Item Units setting page. (Please select a location from the table below)
+
+                </p>
+
+                <p flex ng-if="!vm.formData.copy_location">
+
+                    With a manual setup your location will be turned on. Inventory items can be added to this location from the Items settings page.
+
+                </p>
+
+            </div>
+
+            <div layout="column" flex="100">
+
+                <peach-card flex>
+
+                    <peach-card-content>
+
+                        <md-radio-group ng-model="vm.formData.active_location_id" ng-required="vm.formData.copy_location">
+                            
+                            <md-data-table-container>
+                    
+                                <table md-data-table>
+                    
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 70%;" name="Active Locations"></th>
+                                            <th style="width: 30%;" name=""></th>
+                                        </tr>
+                                    </thead>
+                    
+                                    <tbody>
+
+                                        <tr ng-repeat="activeLocation in vm.activeLocations">
+
+                                            <td ng-if="vm.formData.copy_location">
+
+                                                <md-radio-button value="{{ ::activeLocation.id }}" class="md-primary" ng-disabled="vm.blockers.api_processing || !vm.canEditActiveLocations">
+                                                    {{ ::activeLocation.display_name }}
+                                                </md-radio-button>
+
+                                            </td>
+
+                                            <td ng-if="!vm.formData.copy_location">
+
+                                                {{ ::activeLocation.display_name }}
+
+                                            </td>
+
+                                            <td>
+                                                &nbsp;
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+                    
+                                </table>
+                    
+                            </md-data-table-container>
+
+                        </md-radio-group>
+
+                    </peach-card-content>
+
+                </peach-card>
+
+            </div>
+
+        </section>
+
+        <section ng-if="vm.inactiveLocations.length == 0" layout="column" flex>
+
+            <div layout="row" flex>
+
+                <p>
+
+                    All Locations are active.
+
+                </p>
+
+            </div>
+
+            <div layout="row" flex>
+
+                <peach-card flex>
+
+                    <peach-card-content>
+                            
+                        <md-data-table-container>
+                
+                            <table md-data-table>
+                
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70%;" name="Active Locations"></th>
+                                        <th style="width: 30%;" name=""></th>
+                                    </tr>
+                                </thead>
+                
+                                <tbody>
+
+                                    <tr ng-repeat="activeLocation in vm.activeLocations">
+
+                                        <td>
+
+                                            {{ ::activeLocation.display_name }}
+
+                                        </td>
+
+                                        <td>
+                                            &nbsp;
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+                
+                            </table>
+                
+                        </md-data-table-container>
+
+                    </peach-card-content>
+
+                </peach-card>
+
+            </div>
+
+        </section>
+
+    </peach-modal-content>
+
+    <peach-modal-footer loading="vm.blockers.api_processing">
+
+        <span flex></span>
+
+        <md-button class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Cancel">Cancel</md-button>
+
+        <md-button ng-if="vm.inactiveLocations.length > 0 && vm.canEditActiveLocations" class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.activateLocationForm.$invalid" ng-click="vm.activateLocation();" aria-label="Turn on location">Turn on location</md-button>
+
+    </peach-modal-footer>
+
+</peach-modal>

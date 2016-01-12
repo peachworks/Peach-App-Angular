@@ -1,0 +1,436 @@
+<style>
+    
+    #page_frame input[type='number'] {
+        -moz-appearance:textfield;
+    }
+
+    #page_frame input::-webkit-outer-spin-button,
+    #page_frame input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+    
+    #page_frame table[md-data-table] md-checkbox {
+        margin: 0px;
+        margin-left: -4px;
+        padding: 0px 0px 0px 14px;
+    }
+  
+</style>
+
+<peach-modal loading="vm.blockers.initializing">
+
+    <peach-modal-header on-close="vm.goBack();">
+
+        <form name="forms.vendorForm" novalidate="true" autocomplete="off">
+
+            <md-input-container flex>
+
+                <label>Vendor Name</label>
+
+                <input 
+                    type="text" 
+                    name="vendorName" 
+                    class="modal-header-input" 
+                    ng-model="vm.editedVendor.form_data.name" 
+                    ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}" 
+                    ng-change="vm.nameChangeCallback();" 
+                    ng-blur="vm.nameBlurCallback();" 
+                    aria-label="Vendor Name" 
+                    ng-maxlength="200" 
+                    ng-readonly="vm.blockers.api_processing || !vm.canEditVendor" 
+                    required />
+                <div ng-messages="forms.vendorForm.vendorName.$error" ng-if="forms.vendorForm.vendorName.$invalid && forms.vendorForm.vendorName.$dirty">
+                    <div ng-message="required">You have to specify a name</div>
+                    <div ng-message="duplicate">Name already exists</div>
+                    <div ng-message="maxlength">Name can't be longer than 200 characters</div>
+                </div>
+
+            </md-input-container>
+
+        </form>
+
+    </peach-modal-header>
+
+    <peach-modal-content>
+
+        <md-tabs md-selected="selectedIndex" md-center-tabs="false" md-dynamic-height md-border-bottom>
+
+            <md-tab ng-repeat="tab in vm.tabs.availableTabs" label="{{ tab.title }}" ng-if="tab.visible" md-on-deselect="tab.deselectCallback();">
+
+                <md-content layout class="md-padding" ng-include src="tab.template">
+                </md-content>
+
+            </md-tab>
+
+        </md-tabs>
+
+    </peach-modal-content>
+
+    <peach-modal-footer loading="vm.blockers.api_processing">
+
+        <md-button ng-if="vm.editedVendor.data.id && canDeleteVendor" class="md-raised md-warn has-progress" ng-disabled="vm.blockers.api_processing" ng-click="vm.confirmDeleteVendor();" aria-label="Delete">Delete</md-button>
+
+        <span flex></span>
+
+        <md-button class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Cancel">Cancel</md-button>
+
+        <md-button ng-if="vm.canEditVendor" hide-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || forms.vendorForm.$invalid" ng-click="vm.saveVendor();" aria-label="Save Changes">Save Changes</md-button>
+
+        <md-button ng-if="vm.canEditVendor" hide-gt-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || forms.vendorForm.$invalid" ng-click="vm.saveVendor();" aria-label="Save">Save</md-button>
+
+    </peach-modal-footer>
+
+</peach-modal>
+
+<!-- -------------------- VENDOR INFO TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="vendorInfoTabTemplate">
+
+    <div layout="column" flex>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{vm.userInfo.type}}">
+            {{ userInfo.message }}
+        </peach-message>
+
+        <div layout="row">
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.address}">
+                
+                <label>Address</label>
+
+                <input
+                    name="address"
+                    ng-model="vm.editedVendor.form_data.address"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Address"
+                />
+
+            </md-input-container>
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.address2}">
+
+                <label>Address 2</label>
+
+                <input
+                  name="address2"
+                  ng-model="vm.editedVendor.form_data.address2"
+                  ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                  aria-label="Address 2"
+                />
+
+            </md-input-container>
+
+        </div>
+
+        <div layout="row">
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.country}">
+
+                <label>Country</label>
+
+                <md-select
+                    name="country"
+                    ng-model="vm.editedVendor.form_data.country_id"
+                    ng-change="vm.loadStates(vm.editedVendor.form_data.country_id)"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Country"
+                >
+
+                    <md-option ng-repeat="country in vm.countries" value="{{::country.id}}">{{::country.name_en}}</md-option>
+
+                </md-select>
+
+            </md-input-container>
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.State}">
+
+                <label>State</label>
+
+                <md-select
+                    name="state"
+                    ng-model="vm.editedVendor.form_data.state_id"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor || !vm.editedVendor.form_data.country_id"
+                    aria-label="State"
+                >
+
+                    <md-option ng-repeat="state in vm.states" value="{{::state.id}}">{{::state.state}}</md-option>
+
+                </md-select>
+                  
+            </md-input-container>
+
+        </div>
+
+        <div layout="row">
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.city}">
+                
+                <label>City</label>
+                
+                <input
+                    name="city"
+                    ng-model="vm.editedVendor.form_data.city"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="City"
+                />
+
+            </md-input-container>
+              
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.zip}">
+
+                <label>Postal Code</label>
+
+                <input
+                    name="postal_code"
+                    ng-model="vm.editedVendor.form_data.zip"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Postal Code"
+                />
+
+              </md-input-container>
+
+        </div>
+
+        <div layout="row">
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.phone}">
+
+                <label>Phone</label>
+
+                <input
+                    name="phone"
+                    ng-model="vm.editedVendor.form_data.phone"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Phone"
+                />
+
+            </md-input-container>
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.fax}">
+            
+                <label>Fax</label>
+            
+                <input
+                    name="fax"
+                    ng-model="vm.editedVendor.form_data.fax"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Fax"
+                />
+
+            </md-input-container>
+
+        </div>                
+
+        <div layout="row">
+        
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.notes}">
+            
+                <label>Notes</label>
+            
+                <input
+                    name="notes"
+                    ng-model="vm.editedVendor.form_data.notes"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Notes"
+                />
+
+            </md-input-container>
+
+        </div>                
+
+        <div layout="row">
+
+            <div layout="row" flex>
+
+                <md-switch 
+                    name="isActive" 
+                    class="md-primary" 
+                    ng-model="vm.editedVendor.form_data.is_active" 
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor" 
+                    aria-label="Active"
+                >
+
+                    Active
+
+                </md-switch>
+
+                <span flex></span>
+
+                <button 
+                    class="md-primary md-button md-default-theme"
+                    ng-if="vm.editedVendor.form_data.id"
+                    ng-click="vm.openItemsPage()"
+                >
+
+                    VIEW ALL VENDOR ITEMS
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+                                
+</script>
+
+<!-- -------------------- VENDOR LOCATIONS TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="vendorLocationsTabTemplate">
+
+    <div layout="column" flex>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{vm.userInfo.type}}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+    
+        <div layout="row" flex>
+
+            <md-input-container flex="30">
+
+                <label>Search Locations</label>
+
+                <input
+                    name="filter_locations"
+                    ng-model="vm.filterLocations"
+                    ng-disabled="vm.blockers.api_processing"
+                    aria-label="Search Locations"
+                />
+
+            </md-input-container>
+
+        </div>
+
+        <peach-card flex>
+
+            <peach-card-content>
+
+                <md-data-table-container>
+
+                    <table md-data-table md-row-select="vm.editedVendor.locations.checked_locations">
+                    
+                        <thead>
+
+                            <tr>
+
+                                <th style="width: 50%;" name="Location"></th>
+                                <th style="width: 50%;" name="Customer Number"></th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody md-disable-select="!vm.canEditVendor">
+
+                            <tr ng-repeat="vendorLocation in vm.editedVendor.locations.data_array  | filter:vm.filterLocations">
+
+                                <td>
+                                    {{ ::vendorLocation.display_name }}
+                                </td>
+                            
+                                <td >
+
+                                    <md-input-container ng-if="vm.isLocationChecked(vendorLocation)" flex md-no-float ng-class="{'md-input-has-value': vm.vendorLocation.customer_number}">
+                                        
+                                        <input
+                                            name="customer_number"
+                                            ng-model="vm.vendorLocation.customer_number"
+                                            ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                                            aria-label="Customer Number"
+                                            placeholder="Customer Number"
+                                        />
+
+                                    </md-input-container>
+                                
+                                </td>
+                            
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </md-data-table-container>
+
+            </peach-card-content>
+
+        </peach-card>
+    
+    <div>
+
+</script>
+
+<!-- -------------------- CONTACT INFO TAB TEMPLATE -------------------- -->
+
+<script type="text/ng-template" id="contactInfoTabTemplate">
+
+    <div layout="column" flex>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{vm.userInfo.type}}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <div layout="row">
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.contact_first_name}">
+        
+                <label>Contact First Name</label>
+                
+                <input
+                    name="contact_first_name"
+                    ng-model="vm.editedVendor.form_data.contact_first_name"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Contact First Name"
+                />
+
+            </md-input-container>
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.contact_last_name}">
+            
+                <label>Contact Last Name</label>
+                
+                <input
+                    name="contact_last_name"
+                    ng-model="vm.editedVendor.form_data.contact_last_name"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Contact Last Name"
+                />
+
+            </md-input-container>
+
+        </div>
+
+        <div layout="row">
+
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.contact_email}">
+            
+                <label>Email</label>
+                
+                <input
+                    name="email"
+                    type="email"
+                    ng-model="vm.editedVendor.form_data.contact_email"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Email"
+                />
+            
+            </md-input-container>
+            
+            <md-input-container flex ng-class="{'md-input-has-value': vm.editedVendor.form_data.contact_mobile}">
+            
+                <label>Mobile Phone</label>
+                
+                <input
+                    name="contact_mobile"
+                    ng-model="vm.editedVendor.form_data.contact_mobile"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditVendor"
+                    aria-label="Mobile Phone"
+                />
+            
+            </md-input-container>
+
+        </div>
+
+    </div>
+
+</script>

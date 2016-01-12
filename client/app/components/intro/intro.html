@@ -1,5 +1,524 @@
-<div id="intro-container" flex layout="column" layout-fill>
-  <md-whiteframe class="md-whiteframe-1dp" layout layout-align="center center">
-    <img ng-src="{{intro.logoImage}}"></img>
-  </md-whiteframe>
-</div>
+<style>
+
+#page_frame peach-card-header {
+    padding: 15px 20px;
+}
+
+#page_frame .empty-progress {
+    margin-bottom: 20px;
+}
+
+#page_frame md-progress-linear {
+    height: 0;
+}
+
+#page_frame md-progress-linear:not([md-mode="indeterminate"]) .md-container {
+    height: 20px;
+    background-color: #e5e5e5;
+}
+
+#page_frame md-progress-linear .md-bar {
+    background-color: #8bc658;
+    height: 20px !important;
+}
+
+#page_frame .hide-intro-page {
+    margin: -10px 8px;
+    line-height: 12px;
+}
+
+#page_frame .completed {
+    color: #a3a3a3 !important;
+}
+
+#page_frame .completed img {
+    opacity: 0.3;
+}
+
+#page_frame .icon-caret {
+    display: none;
+}
+
+#page_frame .hint-text {
+    font-size: 13px;
+    font-weight: regular;
+    color: #a7a9ac;
+    margin-bottom: 10px;
+}
+
+#page_frame .md-input-has-value {
+    margin-top: 20px;
+}
+
+#page_frame div.intro-step {
+    padding: 20px;
+}
+
+#page_frame div.intro-step img {
+    width: 50px;
+}
+
+#page_frame div.intro-step ul {
+    margin-top: 0;
+    padding-left: 40px;
+}
+
+#page_frame div.intro-step ul li {
+    line-height: 32px;
+}
+
+#page_frame div.intro-step p {
+    margin-top: 0;
+}
+
+#page_frame div.intro-step.step1 ul {
+    margin-bottom: 0;
+}
+
+#page_frame div.step-actions {
+    margin-left: 20px;
+}
+
+#page_frame div.step-completed-checkmark {
+    background-image: url("/assets/img/icons/green_check_tab.png");
+    height: 23px;
+    margin-top: -15px;
+    width: 44px;
+}
+
+#page_frame div.progress-bar-value {
+    position: relative;
+    color: #ffffff;
+    text-align: center;
+}
+
+#page_frame div.step-actions md-input-container {
+    padding-bottom: 0px;
+}
+
+#page_frame div.step-actions a, div.step-actions button {
+    margin: 0 8px;
+}
+
+#page_frame div.setup-location {
+    margin: 15px 10px 0;
+}
+
+#page_frame div.advanced-step-text {
+    margin-left: 30px;
+}
+
+@media screen and (max-width: 1024px){
+    #page_frame div.intro-step div:nth-child(1) {
+        margin-right: 20px;
+    }
+}
+
+/* Fix for global style change */
+peach-card.completed peach-card-header h4 {
+    color: #a3a3a3 !important;
+}
+
+</style>
+
+<md-content>
+
+    <peach-card>
+    
+        <peach-card-header title="Welcome to Cake">
+            <span flex></span>
+            <section layout-align="top">
+                <md-button class="md-primary hide-intro-page" ng-disabled="blockers.api_processing" title="Hide Intro Page" aria-label="Hide Intro Page" ng-click="hideIntroPage();">
+                    Hide Intro Page
+                </md-button>
+            </section>
+        </peach-card-header>
+    
+        <peach-card-content>
+    
+            <div class="intro-step">
+    
+                <p>Cake is the Self-Service app you've been waiting for. No one will admit that inventory is fun, but Cake will walk you through five easy steps below to get you setup counting and receiving inventory before you know it. Cake will keep track of your progress so you'll know where to go next.</p>
+                <p class="hint-text" ng-if="introCompletion < 100">Progress</p>
+                <md-progress-linear md-mode="determinate" value="{{introCompletion}}" ng-if="introCompletion < 100" ng-class="{'empty-progress': introCompletion === 0}"></md-progress-linear>
+                <div class="progress-bar-value" ng-if="0 <= introCompletion && introCompletion < 100" style="width: {{introCompletion}}%;">{{introCompletion}}%</div>
+    
+                <peach-message ng-if="introCompletion === 100" type="info">
+                    Congratulations, you've completed your first steps to being an inventory wizard!
+                </peach-message>
+                
+            </div>    
+                
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card can-collapse="true" is-open="{{!stepsCompletion[1]}}" ng-class="{'completed': stepsCompletion[1]}">
+    
+        <peach-card-header>
+            <h4>{{stepOneTitle}}</h4>
+            <span flex></span>
+            <section layout-align="top">
+                <div class="step-completed-checkmark" ng-show="stepsCompletion[1]"></div>
+            </section>    
+        </peach-card-header>
+    
+        <peach-card-content>
+    
+            <div layout="row" class="intro-step step1">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/location_2x.png">
+                </div>
+    
+                <div>
+                    <ul>
+                        <li>Pick the location where you would like to start inventory.</li>
+                        <li>Different stores may have different items, costs and units; starting with just one location makes setup quicker and easier.</li>
+                        <li>Once your first location is setup you'll easily be able to copy your setup to any additional locations.</li>
+                    </ul>
+    
+                    <div layout="row" class="step-actions">
+                    
+                        <div flex="20">
+                            <md-input-container flex ng-class="{'md-input-has-value': selectedLocationId.length > 0}">
+                                <label ng-show="!selectedLocationId">Select Location</label>
+                                <md-select name="location"
+                                           ng-model="selectedLocationId"
+                                           ng-disabled="stepsCompletion[1]"
+                                           required
+                                           aria-label="Locations">
+                                    <md-option ng-repeat="location in accountLocations" value="{{location.id}}">{{location.name}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>    
+                        
+                        <div flex="20" class="setup-location">
+                            <md-button class="md-raised md-primary" ng-click="setupLocation(selectedLocationId);" ng-disabled="blockers.api_processing || !selectedLocationId || stepsCompletion[1]" title="Setup Location" aria-label="Setup Location">
+                                Setup Location
+                            </md-button>
+                        </div>
+                        
+                    </div> 
+                    
+                </div>
+    
+            </div>
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card can-collapse="true" is-open="{{!stepsCompletion[2]}}" ng-class="{'completed': stepsCompletion[2] || !stepsCompletion[1]}">
+    
+        <peach-card-header title="Step Two: Add your First Vendor">
+            <span flex></span>
+            <section layout-align="top">
+                <div class="step-completed-checkmark" ng-show="stepsCompletion[2]"></div>
+            </section>    
+        </peach-card-header>
+    
+        <peach-card-content>
+    
+            <div layout="row" class="intro-step step2">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/vendors_2x.png">
+                </div>
+
+                <div>
+                    <ul>
+                        <li>Vendors are the people or businesses you buy products from.</li>
+                        <li>Cake gives you the flexibility to buy an item from multiple vendors in different units.</li>
+                        <li>Go to the vendor settings page to add your first vendor.</li>
+                    </ul>
+    
+                    <div layout="row" class="step-actions">
+                    
+                        <md-button class="md-raised md-primary" ng-href="#/settings/edit_vendor" ng-disabled="blockers.api_processing || !stepsCompletion[1] || stepsCompletion[2]" title="Add My First Vendor" aria-label="Add My First Vendor">
+                            Add My First Vendor
+                        </md-button>
+                        
+                    </div> 
+                    
+                </div>
+    
+            </div>
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card can-collapse="true" is-open="{{!stepsCompletion[3]}}" ng-class="{'completed': stepsCompletion[3] || !stepsCompletion[1] || !stepsCompletion[2]}">
+    
+        <peach-card-header title="Step Three: Add Items and Vendor Products ">
+            <span flex></span>
+            <section layout-align="top">
+                <div class="step-completed-checkmark" ng-show="stepsCompletion[3]"></div>
+            </section>  
+        </peach-card-header>
+    
+        <peach-card-content>
+        
+            <div layout="row" class="intro-step">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/items_2x.png">
+                </div>
+                
+                <div>
+    
+                    <ul>
+                        <li>The key to Inventory is of course your Inventory Items.</li>
+                        <li>Cake comes built with a database of suggested items.</li>
+                        <li>Create your vendor products as you add items.</li>
+                        <li>Let's get started by adding your first 10 items, either manually or from Cake's suggestions.</li>
+                    </ul>
+                    
+                    <div layout="row" class="step-actions">
+            
+                        <md-button class="md-raised md-primary" ng-click="goToItems()" ng-disabled="blockers.api_processing || !stepsCompletion[1] || !stepsCompletion[2] || stepsCompletion[3]" title="Add Items" aria-label="Add Items">
+                            Add Items
+                        </md-button>
+                        
+                    </div>    
+                    
+                </div>
+            
+            </div>
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card can-collapse="true" is-open="{{!stepsCompletion[4]}}" ng-class="{'completed': stepsCompletion[4] || !stepsCompletion[1] || !stepsCompletion[2] || !stepsCompletion[3]}">
+    
+        <peach-card-header title="Step Four: Add the Starting Count">
+            <span flex></span>
+            <section layout-align="top">
+                <div class="step-completed-checkmark" ng-show="stepsCompletion[4]"></div>
+            </section>  
+        </peach-card-header>
+    
+        <peach-card-content>
+        
+            <div layout="row" class="intro-step">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/startingCount_2x.png">
+                </div>
+                
+                <div>
+    
+                    <ul>
+                        <li>All Inventory needs a starting point to base values off of.</li>
+                        <li>Go to the Counts Page to create your starting Count, including the starting costs, of all your inventory items.</li>
+                        <li>If your organization is just getting started and don't have any on hand inventory, just choose to start with a 0 quantity.</li>
+                    </ul>
+                    
+                    <div layout="row" class="step-actions">
+            
+                        <md-button class="md-raised md-primary" ng-href="#/edit_count" ng-disabled="blockers.api_processing || !stepsCompletion[1] || !stepsCompletion[2] || !stepsCompletion[3] || stepsCompletion[4]" title="Start my First Count" aria-label="Start my First Count">
+                            Start my First Count
+                        </md-button>
+                        <!--
+                        <md-button class="md-raised md-primary" ng-click="createStartingCount();" ng-disabled="blockers.api_processing || !stepsCompletion[1] || !stepsCompletion[2] || stepsCompletion[3]" title="Start with zero inventory" aria-label="Start with zero inventory">
+                            Start with zero inventory
+                        </md-button>-->
+                        
+                    </div>    
+                    
+                </div>
+            
+            </div>
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card can-collapse="true" is-open="{{!stepsCompletion[5]}}" ng-class="{'completed': stepsCompletion[5] || !stepsCompletion[1] || !stepsCompletion[2] || !stepsCompletion[3] || !stepsCompletion[4]}">
+    
+        <peach-card-header title="Step Five: Add the First Invoice ">
+            <span flex></span>
+            <section layout-align="top">
+                <div class="step-completed-checkmark" ng-show="stepsCompletion[5]"></div>
+            </section>  
+        </peach-card-header>
+    
+        <peach-card-content>
+        
+            <div layout="row" class="intro-step">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/receipt_2x.png">
+                </div>
+                
+                <div>
+    
+                    <ul>
+                        <li>Now that you've completed your starting count you're ready to receive more inventory.</li>
+                        <li>Use the Invoices page to add quantities of your items.</li>
+                        <li>Counts only tell you so much about your items. Invoices allow you to provide updated unit costs by vendors, which allows for accurate inventory costing.</li>
+                    </ul>
+                    
+                    <div layout="row" class="step-actions">
+    
+                        <md-button class="md-raised md-primary" ng-href="#/edit_invoice" ng-disabled="blockers.api_processing || !stepsCompletion[1] || !stepsCompletion[2] || !stepsCompletion[3] || !stepsCompletion[4] || stepsCompletion[5]" title="Add Invoice" aria-label="Add Invoice">
+                            Add Invoice
+                        </md-button>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>    
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card can-collapse="true" is-open="{{!stepsCompletion[6]}}" ng-class="{'completed': stepsCompletion[6] || !stepsCompletion[1] || !stepsCompletion[2] || !stepsCompletion[3] || !stepsCompletion[4] || !stepsCompletion[5]}">
+    
+        <peach-card-header title='Step Six: Add the Next "Regular" Count'>
+            <span flex></span>
+            <section layout-align="top">
+                <div class="step-completed-checkmark" ng-show="stepsCompletion[6]"></div>
+            </section>  
+        </peach-card-header>
+    
+        <peach-card-content>
+        
+            <div layout="row" class="intro-step">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/regularCount_2x.png">
+                </div>
+                
+                <div>
+    
+                    <ul>
+                        <li>After receiving and using inventory your usage reports need to have a new Count value to compare values to.</li>
+                        <li>From the Counts Page you can choose to create a new Count and quickly add quantities for your items.</li>
+                        <li>Your reports will now have a starting count and an ending count to give accurate usage values.</li>
+                    </ul>
+                    
+                    <div layout="row" class="step-actions">
+    
+                        <md-button class="md-raised md-primary" ng-href="#/edit_count" ng-disabled="blockers.api_processing || !stepsCompletion[1] || !stepsCompletion[2] || !stepsCompletion[3] || !stepsCompletion[4] || !stepsCompletion[5] || stepsCompletion[6]" title="Add New Count" aria-label="Add New Count">
+                            Add New Count
+                        </md-button>
+                        
+                    </div>    
+                
+                </div>
+                
+            </div>
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+    <peach-card ng-if="stepsCompletion[6]">
+    
+        <peach-card-header title='Advanced Inventory Options'>
+        </peach-card-header>
+    
+        <peach-card-content>
+        
+            <div layout="row" class="intro-step">
+    
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/reports_2x.png">
+                </div>
+                
+                <div>
+    
+                    <div class="advanced-step-text">
+                        <p>Reports</p>
+                        <p>With your starting counts, receipts and ending counts you're now ready to view your data on usage reports.</p>
+                    </div>    
+
+                    <div layout="row" class="step-actions">
+                        <md-button class="md-raised md-primary" ng-click="goToReports()" ng-disabled="blockers.api_processing" title="View Reports" aria-label="View Reports">
+                            View Reports
+                        </md-button>    
+                    </div>
+                
+                </div>
+                
+            </div>    
+                
+            <div layout="row" class="intro-step" ng-if="accountLocations.length > 1 && inventoryLocations.length < accountLocations.length">
+            
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/secondLocation_2x.png">
+                </div>
+                
+                <div>
+    
+                    <div class="advanced-step-text">
+                        <p>Activate Additional Locations</p>
+                        <p>With your first location up and running, you're ready to setup a additional locations on Cake.</p>
+                    </div>    
+                        
+                    <div layout="row" class="step-actions">
+                        <md-button class="md-raised md-primary" ng-href="#/settings/add_active_location" ng-disabled="blockers.api_processing" title="Setup New Location" aria-label="Setup New Location">
+                            Setup New Location
+                        </md-button>
+                    </div>    
+                
+                </div>
+                
+            </div>
+            
+            <div layout="row" class="intro-step">
+            
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/countUnits_2x.png">
+                </div>
+                
+                <div>
+    
+                    <div class="advanced-step-text">
+                        <p>Count Units</p>
+                        <p>Do you want to change the units that appear on a Count or Receipt Sheet? No problem, customize which units appear per location using the Item Units Settings Page.</p>
+                    </div>    
+    
+                    <div layout="row" class="step-actions">
+                        <md-button class="md-raised md-primary" ng-href="#/settings/item_units" ng-disabled="blockers.api_processing" title="Manage Item Units" aria-label="Manage Item Units">
+                            Manage Item Units
+                        </md-button>
+                    </div>
+                
+                </div>
+            
+            </div>
+            
+            <div layout="row" class="intro-step">
+            
+                <div>
+                    <img class="pull-left" src="/assets/img/cake/groups_2x.png">
+                </div>
+                
+                <div>
+    
+                    <div class="advanced-step-text">
+                        <p>Count Groups</p>
+                        <p>Create new Count Groups to easily manage sets of items that you want to count on different count sheets, or on different frequencies.</p>
+                    </div>    
+    
+                    <div layout="row" class="step-actions">
+                        <md-button class="md-raised md-primary" ng-href="#/settings/count_groups" ng-disabled="blockers.api_processing" title="Edit Count Groups" aria-label="Edit Count Groups">
+                            Edit Count Groups
+                        </md-button>
+                    </div>    
+                    
+                </div>
+                
+            </div>    
+    
+        </peach-card-content>
+    
+    </peach-card>
+    
+</md-content>

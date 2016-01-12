@@ -19,19 +19,17 @@ import routing from './app.config';
 // Services
 import activeLocationsService            from './common/services/activelocations/activelocations';
 import commonService                     from './common/services/common/common'; // The service formerly known as cakeCommon
-import countGroupsService                from './common/services/countgroups/countgroups';
 import countItemsService                 from './common/services/countitems/countitems';
-import countriesService                  from './common/services/countries/countries';
 import countsService                     from './common/services/counts/counts';
 import eventItemsService                 from './common/services/eventitems/eventitems';
-import eventsService                     from './common/services/events/events';
-import glAccountsService                 from './common/services/glaccounts/glaccounts';
 import invoiceItemsService               from './common/services/invoiceitems/invoiceitems';
 import invoicesService                   from './common/services/invoices/invoices';
 import itemsService                      from './common/services/items/items';
 import settingsService                   from './common/services/settings/settings';
 import sharedDataService                 from './common/services/shareddata/shareddata';
 import vendorsService                    from './common/services/vendors/vendors';
+import countGroupsService                from './common/services/countgroups/countgroups';
+import countriesService                  from './common/services/countries/countries';
 
 // Components
 import AddActiveLocationController       from './components/add_active_location/add_active_location';
@@ -65,18 +63,16 @@ angular.module(peachRc.framework.angular.module, [
   // Services
   activeLocationsService.moduleName,
   commonService.moduleName,
-  countGroupsService.moduleName,
   countItemsService.moduleName,
-  countriesService.moduleName,
   countsService.moduleName,
   eventItemsService.moduleName,
-  eventsService.moduleName,
-  glAccountsService.moduleName,
   invoiceItemsService.moduleName,
   invoicesService.moduleName,
   itemsService.moduleName,
   settingsService.moduleName,
   sharedDataService.moduleName,
+  countGroupsService.moduleName,
+  countriesService.moduleName,
   vendorsService.moduleName
 ])
   .config(routing)

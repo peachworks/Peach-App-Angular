@@ -1,0 +1,926 @@
+<style>
+  
+    #page_frame input[type='number'] {
+        -moz-appearance: textfield !important;
+    }
+
+    #page_frame input::-webkit-outer-spin-button,
+    #page_frame input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+    }
+
+    #page_frame md-input-container.md-default-theme:not(.md-input-focused) input.md-input.ng-invalid.ng-invalid-required {
+        border-color: #F44336 !important;
+        padding-bottom: 1px;
+    }
+
+    #page_frame .header-component {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #page_frame peach-modal-header .header-component [ng-transclude] {
+        height: auto;
+    }
+  
+    #page_frame md-datepicker .md-datepicker-input-container {
+        width: calc(100% - 90px) !important;
+    }
+
+    .glAccountsSelector .md-text {
+        width: 100%;
+    }
+
+    #page_frame .md-caption {
+        color: #a7a9ac;
+    }
+
+    #page_frame .md-caption.fake-label {
+        margin-top: -7px;
+        z-index: 1;
+        margin-bottom: -8px;
+    }
+
+    #page_frame .text-right {
+        text-align: end;
+    }
+
+    #page_frame .invoice-item .invoice-item-name,
+    #page_frame .invoice-misc-item .invoice-misc-item-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    #page_frame .invoice-item,
+    #page_frame .invoice-misc-item {
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    #page_frame .invoice-item:last-child,
+    #page_frame .invoice-misc-item:last-child {
+        border-bottom: none;
+    }
+
+    #page_frame .invoice-item md-input-container,
+    #page_frame .invoice-misc-item md-input-container {
+        padding-bottom: 2px !important;
+    }
+
+    #page_frame .invoice-item .form-text,
+    #page_frame .invoice-misc-item .form-text {
+        line-height: 32px;
+    }
+
+    #page_frame .invoice-item-complete {
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    #page_frame .invoice-item-complete .invoice-item-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    #page_frame .invoice-item-complete .invoice-item-unit {
+        margin-bottom: 5px;
+    }
+
+    #page_frame .invoice-item-complete .form-text {
+        line-height: 32px;
+        margin-bottom: 5px;
+    }
+
+    #page_frame .invoice-item-complete .form-text:last-child {
+        margin-bottom: 0px;
+    }
+    
+    #page_frame section peach-card:first-child md-card {
+        margin-top: 0px;
+    }
+
+    @media (max-width: 599px) {
+
+        #page_frame .header-component {
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 5px;
+        }
+
+        #page_frame .custom-input-parent:not(:first-child) {
+            margin-top: 10px;
+        }
+
+    }
+
+</style>
+
+<peach-location-alert></peach-location-alert>
+
+<peach-modal loading="vm.blockers.initializing">
+
+    <peach-modal-header on-close="vm.forms.editInvoiceForm.$invalid || vm.invoiceItemsForm.$invalid || vm.invoiceMiscItemsForm.$invalid ? vm.goBack() : vm.closeModal();">
+
+        <h1>{{ vm.editingPreviouslyCreatedInvoice ? 'Edit Invoice' : 'Add Invoice' }}</h1>
+
+        <div ng-if="vm.editedInvoice.data.id" layout="row" flex-gt-sm="initial" flex-sm="100">
+
+            <div flex-gt-sm="initial" flex-sm="100" layout="column" class="header-component">
+
+                <div flex class="md-caption">
+                    Grand Total
+                </div>
+
+                <div flex style="margin-top: 5px;">
+                    $&nbsp;{{ vm.editedInvoice.total_price_value_formatted }}
+                </div>
+
+            </div>
+
+            <div flex-gt-sm="initial" flex-sm="100" layout="column" class="header-component">
+
+                <md-checkbox
+                    name="invoiceIsComplete"
+                    ng-model="vm.editedInvoice.form_data.is_complete"
+                    aria-label="Invoice Complete"
+                    ng-disabled="!vm.canEditInvoice || vm.blockers.api_processing || vm.forms.editInvoiceForm.$invalid || vm.invoiceItemsForm.$invalid || vm.invoiceMiscItemsForm.$invalid"
+                    ng-change="vm.toggleInvoiceIsComplete();"
+                    class="md-primary"
+                >
+                    Invoice Complete
+                </md-checkbox>
+
+            </div>
+
+        </div>
+
+    </peach-modal-header>
+
+    <peach-modal-content>
+
+        <!-- new invoice message -->
+        <peach-message ng-if="!vm.editedInvoice.data.id && vm.canEditInvoice" type="info" dismissible="add_invoice_info_displayed">
+            Select the Date and Vendor for your Invoice and optionally add an invoice number. Choose "Continue" to enter values.
+        </peach-message>
+
+        <!-- completed invoice message -->
+        <peach-message ng-if="vm.editedInvoice.data.id && vm.editedInvoice.was_complete && vm.editedInvoice.data.is_complete" type="info" dismissible="completed_invoice_info_displayed">
+            To edit this previously completed receipt uncheck the "Invoice Complete" checkbox. Edits to completed invoices will affect previously saved data.
+        </peach-message>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{vm.userInfo.type}}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <!-- new invoice initial form -->
+        <peach-card ng-if="!vm.editedInvoice.data.id">
+
+            <peach-card-content>
+
+                <ng-form name="vm.forms.invoiceForm" novalidate layout="column" flex>
+
+                    <div layout="row" flex layout-align="start center" layout-wrap class="md-padding">
+
+                        <div flex-gt-sm="33" flex-sm="100" layout="column" class="custom-input-parent">
+                        
+                            <div ng-if="vm.editedInvoice.form_data.receipt_date" layout="row" flex class="md-caption fake-label">
+                                Receipt Date
+                            </div>
+
+                            <md-datepicker
+                                name="receiptDate"
+                                ng-model="vm.editedInvoice.form_data.receipt_date"
+                                md-placeholder="Receipt Date"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice"
+                                required
+                            ></md-datepicker>
+
+                            <div ng-messages="vm.forms.invoiceForm.receiptDate.$error" ng-if="vm.forms.invoiceForm.receiptDate.$invalid && vm.forms.invoiceForm.receiptDate.$dirty">
+                                <div ng-message="required">Please select a receipt date for this invoice</div>
+                                <div ng-message="is_date">Invalid date</div>
+                            </div>
+
+                        </div>
+
+                        <md-input-container flex-gt-sm="33" flex-sm="100" ng-class="{'md-input-has-value': vm.editedInvoice.form_data.vendor_id}" class="custom-input-parent" style="padding-bottom: 2px;">
+
+                            <label>Vendor</label>
+
+                            <md-select
+                                name="invoiceVendor"
+                                ng-model="vm.editedInvoice.form_data.vendor_id"
+                                aria-label="Vendor"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice"
+                                required
+                            >
+                                <md-option ng-repeat="vendor in vm.availableVendors" value="{{ ::vendor.id }}">{{ ::vendor.name }}</md-option>
+                            </md-select>
+
+                            <div ng-messages="vm.forms.invoiceForm.invoiceVendor.$error" ng-if="vm.forms.invoiceForm.invoiceVendor.$invalid && vm.forms.invoiceForm.invoiceVendor.$dirty">
+                                <div ng-message="required">Please select a vendor</div>
+                            </div>
+
+                        </md-input-container>
+
+                        <md-input-container flex-gt-sm="33" flex-sm="100" class="custom-input-parent" style="padding-bottom: 2px;">
+
+                            <label>Invoice Number</label>
+
+                            <input type="text" name="invoiceNumber" ng-model="vm.editedInvoice.form_data.invoice_number" ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice" aria-label="Invoice Number" maxlength="256" ng-maxlength="256" />
+
+                        </md-input-container>
+
+                    </div>
+
+                </ng-form>
+
+            </peach-card-content>
+
+        </peach-card>
+
+        <!-- edited invoice form -->
+        <peach-card ng-if="vm.editedInvoice.data.id">
+
+            <peach-card-content>
+
+                <ng-form name="vm.forms.editInvoiceForm" novalidate layout="column" flex>
+
+                    <div layout="row" flex layout-align="start center" layout-wrap class="md-padding">
+
+                        <div ng-if="vm.canEditInvoice && !vm.editedInvoice.form_data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+                        
+                            <div ng-if="vm.editedInvoice.form_data.receipt_date" layout="row" flex class="md-caption fake-label">
+                                Receipt Date
+                            </div>
+
+                            <md-datepicker
+                                name="receiptDate"
+                                ng-model="vm.editedInvoice.form_data.receipt_date"
+                                md-placeholder="Receipt Date"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice"
+                                required
+                            ></md-datepicker>
+
+                            <div ng-messages="vm.forms.editInvoiceForm.receiptDate.$error" ng-if="vm.forms.editInvoiceForm.receiptDate.$invalid && vm.forms.editInvoiceForm.receiptDate.$dirty">
+                                <div ng-message="required">Please select a receipt date for this invoice</div>
+                                <div ng-message="is_date">Invalid date</div>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="!vm.canEditInvoice || vm.editedInvoice.form_data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+
+                            <div layout="row" flex class="md-caption">
+                                Receipt Date
+                            </div>
+
+                            <div layout="row" flex style="margin-top: 5px;">
+                                {{ vm.editedInvoice.data.formatted_receipt_date }}
+                            </div>
+
+                        </div>
+
+                        <div flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+
+                            <div layout="row" flex class="md-caption">
+                                Vendor
+                            </div>
+
+                            <div layout="row" flex style="margin-top: 5px;">
+                                {{ ::vm.editedInvoice.data.vendor.name }}
+                            </div>
+
+                        </div>
+
+                        <md-input-container ng-if="vm.canEditInvoice && !vm.editedInvoice.form_data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent" style="padding-bottom: 2px;">
+
+                            <label>Invoice Number</label>
+
+                            <input type="text" name="invoiceNumber" ng-model="vm.editedInvoice.form_data.invoice_number" ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice" aria-label="Invoice Number" maxlength="256" ng-maxlength="256" />
+
+                        </md-input-container>
+
+                        <div ng-if="!vm.canEditInvoice || vm.editedInvoice.form_data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+
+                            <div layout="row" flex class="md-caption">
+                                Invoice Number
+                            </div>
+
+                            <div layout="row" flex style="margin-top: 5px;">
+                                {{ vm.editedInvoice.data.invoice_number ? vm.editedInvoice.data.invoice_number : '--' }}
+                            </div>
+
+                        </div>
+
+                        <div ng-if="vm.canEditInvoice && !vm.editedInvoice.form_data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+                        
+                            <div ng-if="vm.editedInvoice.form_data.invoice_date" layout="row" flex class="md-caption fake-label">
+                                Invoice Date
+                            </div>
+
+                            <md-datepicker
+                                name="invoiceDate"
+                                ng-model="vm.editedInvoice.form_data.invoice_date"
+                                md-placeholder="Invoice Date"
+                                ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice"
+                                required
+                            ></md-datepicker>
+
+                            <div ng-messages="vm.forms.editInvoiceForm.invoiceDate.$error" ng-if="vm.forms.editInvoiceForm.invoiceDate.$invalid && vm.forms.editInvoiceForm.invoiceDate.$dirty">
+                                <div ng-message="required">Please select an invoice date for this invoice</div>
+                                <div ng-message="is_date">Invalid date</div>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="!vm.canEditInvoice || vm.editedInvoice.form_data.is_complete" flex-gt-sm="33" flex-sm="100" class="custom-input-parent">
+
+                            <div layout="row" flex class="md-caption">
+                                Invoice Date
+                            </div>
+
+                            <div layout="row" flex style="margin-top: 5px;">
+                                {{ vm.editedInvoice.data.formatted_invoice_date }}
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+
+                </ng-form>
+
+            </peach-card-content>
+
+        </peach-card>
+
+        <!-- edited invoice items -->
+        <section ng-if="vm.editedInvoice.data.id && !vm.editedInvoice.data.is_complete && vm.canEditInvoice">
+
+            <ng-form name="vm.invoiceItemsForm" novalidate>
+     
+                <peach-card ng-repeat="(categoryName, data) in vm.editedInvoice.items_data" can-collapse="true" is-open="{{$first}}">
+
+                    <peach-card-header title="{{ ::categoryName }}">
+
+                        <div layout flex style="font-size: 16px; line-height: 20px; border-left: 1px solid #e5e5e5; margin-left: 20px; padding-left: 20px;">$ {{ data.category.total_price_value_formatted }}</div>
+
+                    </peach-card-header>
+
+                    <peach-card-content>
+                    
+                        <div layout="row" flex layout-wrap hide-sm class="md-padding invoice-item-complete">
+
+                            <div flex="30" class="invoice-item-name form-text">
+        
+                                Item
+        
+                            </div>
+        
+                            <div flex="70" layout="row" layout-wrap>
+        
+                                <div flex="50" class="invoice-item-name form-text">
+
+                                    Unit Quantity
+
+                                </div>
+
+                                <div flex="30" class="invoice-item-name form-text">
+
+                                    Unit Cost
+
+                                </div>
+
+                                <div flex="20" class="invoice-item-name form-text">
+
+                                    Sub-Total
+
+                                </div>     
+        
+                            </div>
+        
+                        </div>
+
+                        <div ng-repeat="item in data.items" layout="row" flex layout-wrap class="invoice-item">
+
+                            <div ng-repeat="vendorItem in item.vendor_items_data" layout="row" flex="100" layout-wrap class="md-padding invoice-item-unit">
+
+                                <div flex-gt-sm="25" flex-sm="100" layout="row" layout-align="start center" layout-wrap>
+
+                                    <div flex hide-sm class="invoice-item-name form-text">
+
+                                        {{ ::vendorItem.number }}
+
+                                    </div>
+
+                                    <div flex flex-offset="5" hide-sm class="invoice-item-name form-text">
+
+                                        {{ ::vendorItem.item.name }}
+
+                                    </div>
+
+                                    <div flex hide-gt-sm class="invoice-item-name form-text">
+
+                                        {{ ::vendorItem.number }} {{ ::vendorItem.item.name }}
+
+                                    </div>
+
+                                </div>
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Quantity
+                                </div>
+                                
+                                <div flex-gt-sm="30" flex-sm="100" flex-offset-gt-sm="5" layout="row" layout-align="start center" layout-wrap>
+
+                                    <!-- regular screen display -->
+                                    <md-input-container hide-sm md-no-float flex>
+
+                                        <input type="number" min="-999999999.99999" max="999999999.99999" step="0.00001" ng-pattern="vm.cakeFloatPattern" ng-model="vendorItem.new_quantity_value" ng-blur="vm.saveInvoiceItemQuantity(vendorItem.id);" ng-disabled="!vm.canEditInvoice" class="text-right" aria-label="Quantity" placeholder="Quantity" />
+
+                                    </md-input-container>
+
+                                    <div flex flex-offset="5" hide-sm class="form-text">
+
+                                        {{ ::vendorItem.quantity_label }}
+
+                                    </div>
+
+                                    <!-- mobile screen display -->
+                                    <div class="form-text" hide-gt-sm>
+
+                                        &nbsp;&nbsp;
+                                        
+                                    </div>
+
+                                    <md-input-container hide-gt-sm md-no-float flex flex-offset="5">
+
+                                        <input type="number" min="-999999999.99999" max="999999999.99999" step="0.00001" ng-pattern="vm.cakeFloatPattern" ng-model="vendorItem.new_quantity_value" ng-blur="vm.saveInvoiceItemQuantity(vendorItem.id);" ng-disabled="!vm.canEditInvoice" class="text-right" aria-label="Quantity" placeholder="Quantity" />
+
+                                    </md-input-container>
+
+                                    <div flex="initial" flex-offset="5" hide-gt-sm class="form-text text-right">
+
+                                        {{ ::vendorItem.quantity_label }}
+
+                                    </div>
+
+                                </div>
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Cost
+                                </div>
+
+                                <div flex-gt-sm="15" flex-sm="100" flex-offset-gt-sm="5" layout="row" layout-align="start center" layout-wrap>
+
+                                    <div class="form-text">
+
+                                        $
+                                        
+                                    </div>
+
+                                    <md-input-container md-no-float flex flex-offset="5">
+
+                                        <input type="number" cake-number-input-formatted min="0" max="999999999.99999" step="0.00001" ng-model="vendorItem.new_unit_price_value" ng-blur="vm.saveInvoiceItemPrice(vendorItem.id);" ng-readonly="!vm.canEditInvoice || vendorItem.invoice_object == null" class="text-right" aria-label="Cost" placeholder="Cost" ng-required="vendorItem.new_quantity_value" />
+
+                                    </md-input-container>
+
+                                </div>
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Sub-Total
+                                </div>
+
+                                <div flex-gt-sm="15" flex-sm="100" flex-offset-gt-sm="5" layout="row" layout-align="start center" layout-wrap>
+
+                                    <div class="form-text">
+
+                                        $
+                                        
+                                    </div>
+
+                                    <md-input-container md-no-float flex flex-offset="5">
+
+                                        <input type="number" cake-number-input-formatted round="2" min="-999999999.99999" max="999999999.99999" step="0.00001" ng-model="vendorItem.new_extended_price_value" ng-blur="vm.saveInvoiceItemExtendedPrice(vendorItem.id);" ng-readonly="!vm.canEditInvoice || vendorItem.invoice_object == null" class="text-right" aria-label="Sub-Total" placeholder="Sub-Total" ng-required="vendorItem.new_quantity_value" />
+
+                                    </md-input-container>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </peach-card-content>
+
+                </peach-card>
+
+            </ng-form>
+
+        </section>
+
+        <!-- edited invoice misc items -->
+        <section ng-if="vm.editedInvoice.data.id && !vm.editedInvoice.data.is_complete && vm.canEditInvoice">
+
+            <ng-form name="vm.invoiceMiscItemsForm" novalidate>
+     
+                <peach-card can-collapse="true" is-open="vm.editedInvoice.misc_data.opened_by_default">
+
+                    <peach-card-header title="Misc.">
+
+                        <div layout flex style="font-size: 16px; line-height: 20px; border-left: 1px solid #e5e5e5; margin-left: 20px; padding-left: 20px;">$ {{ vm.editedInvoice.misc_data.total_price_value_formatted }}</div>
+
+                    </peach-card-header>
+
+                    <peach-card-content>
+                    
+                        <div layout="row" flex layout-wrap hide-sm class="md-padding invoice-item-complete">
+
+                            <div flex="35" class="invoice-item-name form-text">
+        
+                                GL Account
+        
+                            </div>
+        
+                            <div flex="45" class="invoice-item-name form-text">
+        
+                                Description
+        
+                            </div>
+        
+                            <div flex="20" class="invoice-item-name form-text">
+        
+                                Amount
+        
+                            </div>
+        
+                        </div>
+
+                        <div ng-repeat="item in vm.editedInvoice.misc_data.items_data" layout="row" flex layout-wrap class="invoice-misc-item">
+
+                            <div layout="row" flex="100" layout-align="start center" layout-wrap class="md-padding">
+
+                                <md-input-container flex-gt-sm="30" flex-sm="100" ng-class="{'md-input-has-value': item.new_gl_account_id}">
+
+                                    <label>GL Account</label>
+
+                                    <md-select
+                                        name="itemGLAccount"
+                                        ng-model="item.new_gl_account_id"
+                                        aria-label="GL Account"
+                                        ng-disabled="!vm.canEditInvoice"
+                                        md-on-close="vm.saveInvoiceMiscItemGLAccount(item.id);"
+                                    >
+                                        <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}" class="glAccountsSelector" ng-style="{'padding-left': (16 + (glAccount.depth * 20)) + 'px'}">
+                                            {{ ::glAccount.number }}
+                                            {{ ::glAccount.name }}
+                                            <i ng-if="!glAccount.parent" style="float: right; font-size: 14px; color: #A7A9AC;">({{ ::glAccount.type }})</i>
+                                            <i ng-if="glAccount.parent" style="float: right; font-size: 14px; color: #A7A9AC;">(sub-account of {{ ::glAccount.parent.name }})</i>
+                                        </md-option>
+                                    </md-select>
+
+                                </md-input-container>
+
+                                <md-input-container flex-gt-sm="40" flex-offset-gt-sm="5" flex-sm="100">
+
+                                    <label>Description</label>
+
+                                    <input type="text" name="itemDescription" ng-model="item.new_description_value" ng-blur="vm.saveInvoiceMiscItemDescription(item.id);" ng-disabled="!vm.canEditInvoice" ng-readonly="!item.gl_account_id" aria-label="Description" maxlength="256" ng-maxlength="256" />
+
+                                </md-input-container>
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Amount
+                                </div>
+
+                                <div flex-gt-sm="20" flex-sm="100" flex-offset-gt-sm="5" layout-align="start center" layout="row" layout-wrap>
+
+                                    <div class="form-text">
+
+                                        $
+                                        
+                                    </div>
+
+                                    <md-input-container md-no-float flex flex-offset="5">
+
+                                        <input type="number" cake-number-input-formatted round="2" min="-999999999.99999" max="999999999.99999" step="0.00001" ng-model="item.new_amount_value" ng-blur="vm.saveInvoiceMiscItemAmount(item.id);" ng-disabled="!vm.canEditInvoice" ng-readonly="!item.gl_account_id" class="text-right" aria-label="Amount" placeholder="Amount" />
+
+                                    </md-input-container>
+
+                                    <md-button ng-if="item.id !== 0" flex-offset="5" ng-click="vm.deleteInvoiceMiscItem(item.id);" ng-disabled="!vm.canEditInvoice || vm.blockers.api_processing" class="md-primary md-icon-button" title="Delete" aria-label="Delete">
+                                        <i class="icon-x"></i>
+                                    </md-button>
+
+                                </div>                         
+
+                            </div>
+
+                        </div>
+
+                    </peach-card-content>
+
+                </peach-card>
+
+            </ng-form>
+
+        </section>
+
+        <!-- edit invoice notes -->
+        <section ng-if="vm.editedInvoice.data.id && !vm.editedInvoice.data.is_complete && vm.canEditInvoice" layout="row">
+
+            <md-input-container flex="grow">
+
+                <label>Comment</label>
+                
+                <input name="invoiceNotes" type="text" ng-model="vm.editedInvoice.form_data.notes" ng-disabled="vm.blockers.api_processing || !vm.canEditInvoice" aria-label="Comment" maxlength="256" ng-maxlength="256" />
+
+            </md-input-container>
+
+        </section>
+
+        <!-- completed invoice items -->
+        <section ng-if="vm.editedInvoice.data.id && (vm.editedInvoice.data.is_complete || !vm.canEditInvoice)">
+     
+            <!-- display only if there were some counted items -->
+            <peach-card ng-repeat="(categoryName, data) in vm.editedInvoice.items_data" ng-if="data.counted_items.length > 0" can-collapse="true" is-open="{{$first}}">
+
+                <peach-card-header title="{{ ::categoryName }}">
+
+                    <div layout flex style="font-size: 16px; line-height: 20px; border-left: 1px solid #e5e5e5; margin-left: 20px; padding-left: 20px;">$ {{ data.category.total_price_value }}</div>
+
+                </peach-card-header>
+
+                <peach-card-content>
+
+                    <div layout="row" flex layout-wrap hide-sm class="md-padding invoice-item-complete">
+
+                        <div flex="25" class="invoice-item-name form-text">
+
+                            Item
+
+                        </div>
+
+                        <div flex="70" flex-offset-gt-sm="5">
+
+                            <div layout="row" flex="100" layout-wrap class="invoice-item-unit">
+
+                                <div flex="50" layout="row" class="invoice-item-name form-text">
+
+                                    Unit Quantity
+
+                                </div>
+
+                                <div flex="20" flex-offset-gt-sm="5" class="invoice-item-name form-text">
+
+                                    Unit Cost
+
+                                </div>
+
+                                <div flex="20" flex-offset-gt-sm="5" class="invoice-item-name form-text">
+
+                                    Sub-Total
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div ng-repeat="item in data.counted_items" layout="row" flex layout-wrap class="md-padding invoice-item-complete">
+
+                        <div flex-gt-sm="25" flex-sm="100" class="invoice-item-name form-text">
+
+                            {{ ::item.name }}
+
+                        </div>
+
+                        <div flex-gt-sm="70" flex-sm="100" flex-offset-gt-sm="5">
+
+                            <div ng-repeat="vendorItem in item.counted_vendor_items_data" layout="row" flex="100" layout-wrap class="invoice-item-unit">
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Unit Quantity
+                                </div>
+
+                                <div flex-gt-sm="50" flex-sm="100" layout="row" class="form-text">
+
+                                    {{ ::vendorItem.new_quantity_value }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ ::vendorItem.quantity_label }}
+
+                                </div>
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Unit Cost
+                                </div>
+
+                                <div flex-gt-sm="20" flex-sm="100" flex-offset-gt-sm="5" class="form-text" layout="row">
+
+                                    <div flex="25" hide-sm class="form-text">
+
+                                        $
+
+                                    </div>
+
+                                    <div flex="75" hide-sm class="form-text text-right">
+
+                                        {{ ::vendorItem.new_unit_price_value }}
+
+                                    </div>
+
+
+                                    <div flex hide-gt-sm class="form-text">
+
+                                        $ {{ ::vendorItem.new_unit_price_value }}
+
+                                    </div>
+
+                                </div>
+
+                                <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                                    Sub-Total
+                                </div>
+
+                                <div flex-gt-sm="20" flex-sm="100" flex-offset-gt-sm="5" class="form-text" layout="row">
+
+                                    <div flex="25" hide-sm class="form-text">
+
+                                        $
+
+                                    </div>
+
+                                    <div flex="75" hide-sm class="form-text text-right">
+
+                                        {{ ::vendorItem.new_extended_price_value }}
+
+                                    </div>
+
+                                    <div flex hide-gt-sm class="form-text">
+
+                                        $ {{ ::vendorItem.new_extended_price_value }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </peach-card-content>
+
+            </peach-card>
+
+        </section>
+
+        <!-- completed invoice misc items -->
+        <section ng-if="vm.editedInvoice.data.id && (vm.editedInvoice.data.is_complete || !vm.canEditInvoice)">
+     
+            <!-- show only if there were some items. The will be always at least one item (the placeholder one) -->
+            <peach-card can-collapse="true" is-open="vm.editedInvoice.misc_data.opened_by_default" ng-if="vm.editedInvoice.misc_data.items_data.length > 1">
+
+                <peach-card-header title="Misc.">
+
+                    <div layout flex style="font-size: 16px; line-height: 20px; border-left: 1px solid #e5e5e5; margin-left: 20px; padding-left: 20px;">$ {{ vm.editedInvoice.misc_data.total_price_value }}</div>
+
+                </peach-card-header>
+
+                <peach-card-content>
+
+                    <div layout="row" flex layout-wrap hide-sm class="md-padding invoice-item-complete">
+
+                        <div flex="25" class="invoice-item-name form-text">
+
+                            GL Account
+
+                        </div>
+
+                        <div flex="50" flex-offset-gt-sm="5" class="invoice-item-name form-text">
+
+                            Description
+
+                        </div>
+
+                        <div flex="15" flex-offset-gt-sm="5" class="invoice-item-name form-text">
+
+                            Amount
+
+                        </div>
+
+                    </div>
+
+                    <div ng-repeat="item in vm.editedInvoice.misc_data.items_data" ng-if="item.id !== 0" layout="row" flex layout-wrap class="md-padding invoice-item-complete">
+
+                        <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                            GL Account
+                        </div>
+
+                        <div flex-gt-sm="25" flex-sm="100" class="invoice-item-name form-text">
+
+                            {{ ::item.gl_account_name }}
+
+                        </div>
+
+                        <div ng-if="item.new_description_value" flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                            Description
+                        </div>
+
+                        <div ng-if="item.new_description_value" flex-gt-sm="50" flex-sm="100" flex-offset-gt-sm="5" class="form-text">
+
+                            {{ ::item.new_description_value }}
+
+                        </div>
+
+                        <div ng-if="!item.new_description_value" flex></div>
+
+                        <div flex-sm="100" hide-gt-sm layout="row" class="md-caption fake-label">
+                            Amount
+                        </div>
+
+                        <div flex-gt-sm="15" flex-sm="100" flex-offset-gt-sm="5" class="form-text" layout="row">
+
+                            <div flex="25" hide-sm class="form-text">
+
+                                $
+
+                            </div>
+
+                            <div flex="75" hide-sm class="form-text text-right">
+
+                                {{ ::item.new_amount_value }}
+
+                            </div>
+
+                            <div flex hide-gt-sm class="form-text">
+
+                                $ {{ ::item.new_amount_value }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </peach-card-content>
+
+            </peach-card>
+
+        </section>
+
+        <!-- completed invoice notes -->
+        <section ng-if="vm.editedInvoice.data.id && (vm.editedInvoice.data.is_complete || !vm.canEditInvoice) && vm.editedInvoice.form_data.notes">
+
+            <div layout="column" flex>
+
+                <div flex class="md-caption">
+                
+                    Commment
+
+                </div>
+
+                <div flex>
+                
+                    {{ ::vm.editedInvoice.form_data.notes }}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section ng-if="!vm.editedInvoice.data.is_complete && vm.editedInvoice.update_timestamp">
+            
+            <div layout="row" layout-align="end center">
+
+                <span class="md-caption font-disabled">
+                    
+                    {{ vm.editedInvoice.update_timestamp }}
+
+                </span>
+
+            </div>
+
+        </section>
+
+    </peach-modal-content>
+
+    <peach-modal-footer loading="vm.blockers.api_processing">
+
+        <md-button ng-if="vm.editedInvoice.data.id && vm.canEditInvoice && !vm.editedInvoice.data.is_complete" class="md-raised md-warn has-progress" ng-disabled="vm.blockers.api_processing" ng-click="vm.confirmDeleteInvoice($event);" aria-label="Delete">Delete</md-button>
+
+        <span flex></span>
+
+        <md-button ng-if="!vm.editedInvoice.data.id" class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Cancel">Cancel</md-button>
+
+        <md-button ng-if="vm.editedInvoice.data.is_complete" class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Close">Close</md-button>
+
+        <md-button ng-if="vm.editedInvoice.data.id && vm.canEditInvoice && !vm.editedInvoice.data.is_complete" hide-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.editInvoiceForm.$invalid || vm.invoiceItemsForm.$invalid || vm.invoiceMiscItemsForm.$invalid" ng-click="vm.confirmSaveInvoice($event);" aria-label="Save & close">Save & close</md-button>
+
+        <md-button ng-if="vm.editedInvoice.data.id && vm.canEditInvoice && !vm.editedInvoice.data.is_complete" hide-gt-sm class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.editInvoiceForm.$invalid || vm.invoiceItemsForm.$invalid || vm.invoiceMiscItemsForm.$invalid" ng-click="vm.confirmSaveInvoice($event);" aria-label="Save">Save</md-button>
+
+        <md-button ng-if="!vm.editedInvoice.data.id && vm.canEditInvoice" class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.invoiceForm.$invalid" ng-click="vm.createInvoice();" aria-label="{{ vm.forms.invoiceForm.$invalid ? 'Select a date and vendor to continue' : 'Continue' }}">Continue</md-button>
+
+    </peach-modal-footer>
+
+</peach-modal>

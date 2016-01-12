@@ -1,0 +1,218 @@
+<style>
+    
+    #page_frame #table-spinner {
+        background-color: transparent !important;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+    }
+    
+    /* cake custom progress bar */
+  
+    #page_frame .cake-progress-linear {
+        min-width: 200px;
+        height: 40px;
+        position: relative;
+    }  
+    
+    #page_frame .cake-progress-linear.no-label {
+        height: 20px;
+    } 
+
+    #page_frame .cake-progress-linear md-progress-linear {
+        height: 20px !important;
+    }
+
+    #page_frame .cake-progress-linear .md-container {
+        height: 20px !important;
+        background-color: #e5e5e5 !important;
+        top: 0px !important;
+    }
+
+    #page_frame .cake-progress-linear .md-bar {
+        background-color: #8bc658 !important;
+        height: 20px !important;
+    }
+
+    #page_frame .cake-progress-linear .inner-label {
+        position: absolute;
+        bottom: 0px;
+        height: 20px;
+        width: 100%;
+        text-align: center;
+        color: #fff;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+</style>
+
+<peach-page-header>
+
+    <h1>Browse Inventory Item Database</h1>
+
+    <span flex></span>
+       
+    <md-button class="md-icon-button" ng-click="vm.goBack();" ng-disabled="vm.blockers.api_processing" title="Close" aria-label="Close">
+        <md-icon class="icon icon-x"></md-icon>
+    </md-button>
+
+</peach-page-header>
+    
+<md-content class="md-padding">
+
+    <peach-message type="info" dismissible="bulk_add_items_info_displayed">
+        Your Cake App comes with a built in collection of Inventory Items. Use the table below to easily browser through the items. You can choose to add individual items, or entire categories at a time. Each item comes with default units, conversions and nutritional information.
+    </peach-message>
+
+    <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+        {{ vm.userInfo.message }}
+    </peach-message>
+
+    <section layout="column" flex>
+
+        <div layout="row" flex>
+
+            <div layout="column" flex="50">
+
+                <div layout="row" flex>
+
+                    <md-input-container flex ng-class="{'md-input-has-value': vm.bulkFormData.search_category_tag_index}">
+                        <label>Category</label>
+                        <md-select
+                            name="bulkFormCategoryTag"
+                            ng-model="vm.bulkFormData.search_category_tag_index"
+                            ng-change="vm.bulkFormResultsUpdate();"
+                            ng-disabled="vm.blockers.api_processing || !vm.canEditItems"
+                            aria-label="Category"
+                        >
+                            <md-option ng-repeat="option in vm.itemDBCategoriesAndTags" value="{{ option.index }}">{{ option.name }}</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                </div>
+
+                <div layout="row" flex>
+
+                    <md-input-container flex>
+                        <label>Search</label>
+                        <input type="text" name="bulkFormSearchQuery" ng-model="vm.bulkFormData.search_query" ng-model-options="{updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0}}" ng-change="vm.bulkFormResultsUpdate();" ng-readonly="vm.blockers.api_processing || !vm.canEditItems" aria-label="Search" ng-maxlength="200" />
+                    </md-input-container>
+
+                </div>
+
+                <!--<div ng-if="vm.blockers.api_processing && !vm.blockers.saving" layout="row" flex>
+
+                    <cake-progress-linear style="width: 100%;"></cake-progress-linear>
+
+                </div>-->
+
+                <div layout="row" flex style="position: relative;">
+
+                    <!--<md-content id="table-spinner" ng-show="true" class="md-padding" flex layout="row" layout-align="center center">
+
+                        <md-progress-circular md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+
+                    </md-content>-->
+
+                    <peach-card flex>
+
+                        <peach-card-content>
+
+                            <md-data-table-container>
+
+                                <table md-data-table>
+
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 80%;" name="Item Name"></th>
+                                            <th style="width: 20%;" name="">
+
+                                                <!--<div ng-if="vm.bulkFormData.cached_options.length > 0">
+                                                    
+                                                    <md-button class="md-primary" ng-click="vm.addAllFoundItemsDBItems();" ng-disabled="!vm.canEditItems || vm.blockers.api_processing || vm.blockers.saving" style="margin: 0px;" title="Add all" aria-label="Add all">
+                                                        <span>ADD ALL</span>
+                                                    </md-button>
+
+                                                </div>-->
+
+                                                <!--<div ng-show="vm.blockers.saving">
+
+                                                    <md-progress-circular md-diameter="16" md-mode="indeterminate"></md-progress-circular>
+
+                                                </div>-->
+
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr ng-repeat="option in vm.bulkFormData.cached_options" >
+
+                                            <td>
+
+                                                {{ ::option.name | limitTo: 20 }}{{ option.name.length > 20 ? '...' : ''}}
+
+                                            </td>
+
+                                            <td style="text-align: center;">
+
+                                                <md-button ng-if="!option.already_added && !option.saving" class="md-primary" ng-click="vm.addItemsDBItem(option);" ng-disabled="!vm.canEditItems || vm.blockers.api_processing || vm.blockers.saving" style="margin: 0px;" title="Add" aria-label="Add">
+                                                    <span>ADD</span>
+                                                </md-button>
+
+                                                <div ng-if="!option.already_added && option.saving" style="width: 36px; height: 36px; position: relative;">
+                                                    <md-progress-circular md-diameter="24" md-mode="indeterminate" style="margin-top: -50px;" ></md-progress-circular>
+                                                </div>
+
+                                                <span ng-if="option.already_added" class="md-caption font-disabled" style="text-align: right;">Added</span>
+
+                                            </td>
+                                            
+                                        </tr>
+
+                                        <tr ng-if="!vm.blockers.api_processing && vm.bulkFormData.cached_options.length == 0">
+                                            
+                                            <td colspan="2">
+                                                
+                                                No results...
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </md-data-table-container>
+
+                            <md-data-table-pagination ng-hide="(vm.blockers.api_processing && ! vm.blockers.saving) || vm.bulkFormData.cached_options.length == 0" md-limit="vm.pagination.limit" md-page="vm.pagination.page_no" md-total="{{ vm.pagination.total_items }}" md-row-select="vm.paginationLimits" md-trigger="vm.onPaginationChangeCallback"></md-data-table-pagination>
+
+                        </peach-card-content>
+
+                    </peach-card>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section flex layout="column" layout-wrap="true">
+
+        <div layout="row" layout-align="end">
+
+            <md-button class="md-primary" ng-click="vm.goBack();" ng-disabled="vm.blockers.api_processing" title="Close" aria-label="Close">
+                <span>CLOSE</span>
+            </md-button>
+
+        </div>
+
+    </section>
+
+</md-content>

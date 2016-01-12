@@ -1,0 +1,115 @@
+<style>
+    
+    #page_frame .icon-check-circle {
+        font-size: 25px;
+        line-height: 25px;
+        width: 25px;
+        height: 25px;
+    }
+    
+</style>
+
+<peach-location-alert></peach-location-alert>
+
+<peach-page-header>
+
+    <h1>Invoices</h1>
+
+    <peach-page-header-options options="vm.headerOptions"></peach-page-header-options>
+
+    <peach-search
+        ng-model="vm.searchParams.searchQuery"
+        ng-change="vm.onSearchPhraseUpdateCallback();"
+        ng-disabled="vm.blockers.api_processing"
+        ng-model-options="{
+           updateOn: 'default blur',
+           debounce: {
+             'default': 500,
+             'blur': 0
+           }
+         }">
+    </peach-search>
+
+</peach-page-header>
+
+<peach-message ng-if="vm.isAccountAdmin && !vm.blockers.initializing && !vm.blockers.no_location && vm.invoices.length == 0" type="info" dismissible="invoices_list_info_displayed">
+    To get started adding new inventory choose the Add Invoice button above.
+</peach-message>
+
+<peach-message ng-show="vm.userInfo.message" type="{{vm.userInfo.type}}">
+    {{ vm.userInfo.message }}
+</peach-message>
+
+<peach-card loading="vm.blockers.api_processing">
+
+    <peach-card-content>
+
+        <md-data-table-container>
+
+            <table md-data-table>
+
+                <thead>
+                    <tr>
+                        <th style="width: 20%;" name="Receipt Date"></th>
+                        <th style="width: 20%;" name="Vendor"></th>
+                        <th style="width: 20%;" name="Invoice Number"></th>
+                        <th style="width: 20%;" name="Total"></th>
+                        <th style="width: 20%;" name="Status"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr ng-repeat="invoice in vm.invoices">
+
+                        <td>
+                            <a ng-click="vm.openEditInvoiceModal(invoice.id);" title="View details" >
+                                {{ ::invoice.date_formatted }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ ::invoice.vendor_name }}
+                        </td>
+
+                        <td ng-if="invoice.invoice_number">
+                            {{ ::invoice.invoice_number }}
+                        </td>
+                        <td ng-if="!invoice.invoice_number">
+                            &nbsp;
+                        </td>
+
+                        <td>
+                            $&nbsp;{{ ::invoice.total_formatted }}
+                        </td>
+
+                        <td>
+                        
+                            <md-icon ng-if="invoice.is_complete" md-font-icon="icon-check-circle font-success" aria-label="Complete"></md-icon>
+
+                            <span ng-if="!invoice.is_complete">
+                                &nbsp;
+                            </span>
+                            
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </md-data-table-container>
+
+        <md-data-table-pagination
+            ng-if="vm.pagination.total_items > vm.pagination.limit"
+            md-limit="vm.pagination.limit"
+            md-page="vm.pagination.page_no"
+            md-total="{{vm.pagination.total_items}}"
+            md-row-select="vm.paginationLimits"
+            md-trigger="vm.onPaginationChangeCallback">
+        </md-data-table-pagination>
+
+    </peach-card-content>
+
+</peach-card>

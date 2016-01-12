@@ -1,0 +1,868 @@
+<style>
+
+    #page_frame input[type='number'] {
+        -moz-appearance: textfield !important;
+    }
+
+    #page_frame input::-webkit-outer-spin-button,
+    #page_frame input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+    }
+
+    #page_frame table[md-data-table]>tbody>tr.font-disabled>td, table[md-data-table]>tbody>tr.font-disabled>td>a, table[md-data-table]>tbody>tr.font-disabled>td>.md-button {
+        color: inherit !important;
+    }
+
+    div[cake-custom-multiinput-selector] md-input-container {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    cake-checkbox{box-sizing:border-box;display:block;margin:8px;white-space:nowrap;cursor:pointer;outline:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;padding-left:18px;padding-right:0;position:relative;line-height:26px;min-width:18px;min-height:18px}html[dir=rtl] cake-checkbox{padding-left:0;padding-right:18px}cake-checkbox *,cake-checkbox :after,cake-checkbox :before{box-sizing:border-box}cake-checkbox.md-focused:not([disabled]) .md-container:before{left:-8px;top:-8px;right:-8px;bottom:-8px}cake-checkbox.md-focused:not([disabled]):not(.md-checked):not(.md-indeterminate) .md-container:before{background-color:rgba(0,0,0,.12)}cake-checkbox .md-container{position:absolute;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);display:inline-block;width:18px;height:18px;left:0;right:auto}html[dir=rtl] cake-checkbox .md-container{left:auto;right:0}cake-checkbox .md-container:before{background-color:transparent;border-radius:50%;content:'';position:absolute;display:block;height:auto;left:0;top:0;right:0;bottom:0;transition:all .5s;width:auto}cake-checkbox .md-container:after{content:'';position:absolute;top:-10px;right:-10px;bottom:-10px;left:-10px}cake-checkbox .md-container .md-ripple-container{position:absolute;display:block;width:auto;height:auto;left:-15px;top:-15px;right:-15px;bottom:-15px}cake-checkbox.md-align-top-left>div.md-container{top:12px}cake-checkbox .md-icon{transition:240ms;position:absolute;top:0;left:0;width:18px;height:18px;border-width:2px;border-style:solid;border-radius:2px}cake-checkbox.md-checked .md-icon,cake-checkbox.md-indeterminate .md-icon{border:none}cake-checkbox[disabled]{cursor:no-drop}cake-checkbox.md-checked .md-icon:after{-webkit-transform:rotate(45deg);transform:rotate(45deg);position:absolute;left:6px;top:2px;display:table;width:6px;height:12px;border-width:2px;border-style:solid;border-top:0;border-left:0;content:''}cake-checkbox .md-label{position:relative;display:inline-block;vertical-align:middle;white-space:normal;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;margin-left:10px;margin-right:0}html[dir=rtl] cake-checkbox .md-label{margin-left:0;margin-right:10px}cake-checkbox.md-indeterminate .md-icon:after{-webkit-transform:rotate(90deg);transform:rotate(90deg);position:absolute;left:12px;top:7px;display:table;width:7px;height:12px;border-width:3px;border-style:solid;border-top:0;border-bottom:0px;border-left:0;content:''}
+
+    cake-checkbox .md-icon {
+        transition: 240ms;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 2px;
+        border-color: rgba(0,0,0,0.54);
+        background-color: #E5E5E5;
+    }
+
+    cake-checkbox.md-default-theme.md-checked .md-icon, cake-checkbox.md-default-theme.md-indeterminate .md-icon {
+        background-color: #2E98CC;
+        border-color: rgba(0,0,0,0.54);
+    }
+
+    cake-checkbox.md-checked .md-icon:after, cake-checkbox.md-indeterminate .md-icon:after {
+        border-color: #ffffff;
+    }
+    
+    cake-checkbox {
+        margin: 10px 10px 10px 20px;
+        padding: 0px 0px 0px 20px;
+    }
+    
+    cake-checkbox .md-container {
+        width: 30px;
+        height: 30px;
+    }
+
+    cake-checkbox .md-container .md-icon {
+        width: 30px;
+        height: 30px;
+        border: 0px;
+        background-color: #b1b3b5;
+    }
+
+    cake-checkbox:not([disabled]) .md-container .md-icon {
+        background-color: #e5e5e5;
+    }
+    
+    cake-checkbox .md-label:not(:empty) {
+        margin-left: 30px;
+    }
+
+    cake-checkbox .md-container:after {
+        top: -10px;
+        right: -20px;
+        bottom: -10px;
+        left: -20px;
+    }
+
+    cake-checkbox:not([disabled]).md-checked .md-container .md-icon {
+        background-color: #2E98CC;
+    }
+
+    cake-checkbox.md-checked .md-icon:after {
+        left: 12px;
+        top: 7px;
+        width: 7px;
+        height: 14px;
+        border-width: 3px;
+    }
+    
+    #page_frame table[md-data-table] md-checkbox {
+        margin: 0px;
+        margin-left: -4px;
+        padding: 0px 0px 0px 14px;
+    }
+
+    #page_frame .fake-md-select {
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        -webkit-box-flex: 1;
+        flex: 1;
+        -webkit-order: 2;
+        -ms-flex-order: 2;
+        -webkit-box-ordinal-group: 3;
+        order: 2;
+        
+        background: none;
+        border-width: 0 0 1px 0;
+        line-height: 26px;
+        -ms-flex-preferred-size: 26px;
+        border-radius: 0;
+        margin: 0;
+    }
+
+    #page_frame .fake-md-select-value {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        padding: 2px 2px 1px;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        position: relative;
+        box-sizing: content-box;
+        min-width: 64px;
+        min-height: 26px;
+        -webkit-flex-grow: 1;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        border-bottom-color: rgba(0,0,0,0.12);
+    }
+
+    #page_frame .fake-md-select-value.fake-md-select-placeholder {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-order: 1;
+        -ms-flex-order: 1;
+        order: 1;
+        -webkit-font-smoothing: antialiased;
+        padding-left: 2px;
+        z-index: 1;
+        color: rgba(0,0,0,0.26);
+        cursor: pointer;
+    }
+
+    #page_frame .fake-md-select-value .fake-md-select-icon {
+        -webkit-align-items: flex-end;
+        -ms-flex-align: end;
+        align-items: flex-end;
+        text-align: end;
+        width: 24px;
+        margin: 0 4px;
+        -webkit-transform: translate3d(0,1px,0);
+        transform: translate3d(0,1px,0);
+    }
+
+    #page_frame .fake-md-select-value .fake-md-select-icon:after {
+        display: block;
+        content: '\25BC';
+        position: relative;
+        top: 2px;
+        speak: none;
+        -webkit-transform: scaleY(.6) scaleX(1);
+        transform: scaleY(.6) scaleX(1);
+    }
+
+    #page_frame .fake-md-select-value :first-child {
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: calc(100% - 2*8px);
+        -webkit-transform: translate3d(0,2px,0);
+        transform: translate3d(0,2px,0);
+    }    
+
+    #page_frame #new_item_card peach-card-header {
+        background-color: #287473;
+    }
+
+    #page_frame #new_item_card peach-card-header h4,
+    #page_frame #new_item_card peach-card-header md-icon {
+        color: #ffffff;
+    }
+
+</style>
+
+<peach-page-header>
+
+    <div layout="row" flex="initial" layout-wrap layout-align="start center">
+
+        <!--<peach-page-header-options options="vm.headerOptions"></peach-page-header-options>-->
+
+        <div flex-gt-sm="initial" flex-sm="100">
+
+            <h1>Items</h1>
+
+        </div>
+
+        <div ng-if="vm.canEditItems" hide-sm flex="initial">
+
+            <md-button class="md-primary" ng-click="vm.openNewItemForm();" ng-disabled="vm.blockers.api_processing" title="Add item" aria-label="Add item" style="border-left: 1px solid #D8D8D8;">ADD ITEM</md-button>
+
+        </div>
+
+        <div ng-if="vm.canEditItems" hide-gt-sm flex="100">
+
+            <md-button class="md-primary" ng-click="vm.openNewItemForm();" ng-disabled="vm.blockers.api_processing" title="Add item" aria-label="Add item">ADD ITEM</md-button>
+
+        </div>
+
+        <div ng-if="vm.canEditItems" flex-gt-sm="initial" flex-sm="100">
+
+            <md-switch name="isBulkEdit" class="md-primary" ng-model="vm.bulkEdit.is_enabled" ng-change="vm.onBulkEditModeChangeCallback();" ng-disabled="vm.blockers.api_processing" title="Bulk edit" aria-label="Bulk edit">
+                BULK EDIT
+            </md-switch>
+
+        </div>
+
+    </div>
+
+    <span flex></span>
+
+    <peach-search
+    ng-model="vm.searchParams.searchQuery"
+    ng-change="vm.onSearchPhraseUpdateCallback();"
+    ng-disabled="vm.blockers.api_processing"
+    ng-model-options="{
+       updateOn: 'default blur',
+       debounce: {
+         'default': 500,
+         'blur': 0
+       }
+     }">
+    </peach-search>
+
+</peach-page-header>    
+
+<peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+    {{ vm.userInfo.message }}
+</peach-message>
+
+<div ng-if="!vm.isSingleLocationAccount" layout="column" layout-align="center end" flex style="margin: 10px 20px -20px 30px;">
+    <md-button class="md-primary" ng-click="vm.openAddActiveLocationModal();" ng-disabled="vm.blockers.api_processing" title="Add locations" aria-label="Add locations">
+        {{ vm.activeLocations.length }} of {{ vm.accountLocations.length }} LOCATIONS ARE ACTIVE
+    </md-button>
+</div>
+
+<peach-card ng-if="vm.newItem.show_form && vm.canEditItems" id="new_item_card">
+
+    <peach-card-header title="Add Items">
+
+        <span flex></span>
+
+        <md-button class="md-icon-button" ng-click="vm.closeNewItemForm();" ng-disabled="vm.blockers.api_processing" style="line-height: 20px;" title="Cancel" aria-label="Cancel">
+            <md-icon md-font-icon="icon-x" aria-label="Cancel"></md-icon>
+        </md-button>
+
+    </peach-card-header>
+
+    <peach-card-content>
+
+        <div layout="column" flex class="md-padding" ng-form="vm.forms.newItemForm">
+
+            <div layout="row" flex layout-wrap>               
+
+                <md-autocomplete
+                    flex-gt-sm="50"
+                    flex-sm="100"
+                    md-input-name="newItemName"
+                    md-selected-item="vm.newItem.typeahead.items_db_item"
+                    md-search-text="vm.newItem.typeahead.search_text"
+                    md-delay="500"
+                    md-min-length="0"
+                    md-no-cache="true"
+                    md-items="option in vm.loadNewItemTypeaheadOptions()"
+                    md-item-text="option.name"
+                    md-selected-item-change="vm.newItemFormTypeaheadSelectedItemCallback();"
+                    md-search-text-change="vm.newItemFormTypeaheadSearchTextCallback();"
+                    md-autofocus="true"
+                    md-floating-label="Item Name"
+                    ng-disabled="vm.blockers.api_processing"
+                    md-input-maxlength="200"
+                    tabindex="1"
+                >
+                    <md-item-template>
+                        <span md-highlight-text="searchText">{{ option.name }}</span>
+                    </md-item-template>
+
+                    <div ng-messages="vm.forms.newItemForm.newItemName.$error" ng-if="vm.forms.newItemForm.newItemName.$invalid && vm.forms.newItemForm.newItemName.$dirty">
+                        <div ng-message="required">You have to specify a name</div>
+                        <div ng-message="maxlength">Name can't be longer than 200 characters</div>
+                        <div ng-message="unique">Name already exists</div>
+                    </div>
+
+                </md-autocomplete>
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.newItem.form_data.new_vendor_id}">
+                    <label>Vendors</label>
+                        <md-select
+                            name="newItemVendor"
+                            ng-model="vm.newItem.form_data.new_vendor_id"
+                            ng-disabled="vm.blockers.api_processing || !vm.newItem.typeahead.search_text"
+                            aria-label="Vendors"
+                            tabindex="6"
+                        >
+                            <md-option ng-repeat="vendor in vm.vendors" value="{{ ::vendor.id }}">{{ ::vendor.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+                <!--
+
+                <md-button ng-click="vm.openItemsDBSearchModal();" class="md-primary md-icon-button" title="Add multiple" aria-label="Add multiple">
+                    <i class="icon-search"></i>
+                </md-button>
+
+                -->            
+
+            </div>
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.newItem.form_data.gl_account_id}">
+                    <label>Category</label>
+                    <md-select
+                        name="newItemAccount"
+                        ng-model="vm.newItem.form_data.gl_account_id"
+                        ng-disabled="vm.blockers.api_processing"
+                        aria-label="Category"
+                        tabindex="2"
+                        required
+                    >
+                        <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container ng-if="vm.newItem.form_data.new_vendor_id" flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.newItem.form_data.new_vendor_unit_id}">
+                    <label>Purchase Unit</label>
+                    <md-select
+                        name="newItemVendorUnit"
+                        ng-model="vm.newItem.form_data.new_vendor_unit_id"
+                        ng-change="vm.autoCalculateConversionForNewVendorUnit();"
+                        ng-disabled="vm.blockers.api_processing || !vm.newItem.form_data.new_vendor_id || !vm.newItem.form_data.common_unit_id"
+                        ng-required="vm.newItem.form_data.new_vendor_id"
+                        aria-label="Purchase Unit"
+                        tabindex="7"
+                    >
+                        <md-option ng-repeat="unit in vm.units" value="{{ ::unit.id }}">{{ ::unit.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+            </div>
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.newItem.form_data.common_unit_id}">
+                    <label>Common Unit</label>
+                    <md-select
+                        name="newItemCommonUnit"
+                        ng-model="vm.newItem.form_data.common_unit_id"
+                        ng-disabled="vm.blockers.api_processing || vm.newItem.form_data.items_db_id"
+                        ng-change="vm.resetNewItemVendorData();"
+                        aria-label="Common Unit"
+                        tabindex="3"
+                        required
+                    >
+                        <md-option ng-repeat="unit in vm.units" value="{{ ::unit.id }}">{{ ::unit.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container ng-if="vm.newItem.form_data.new_vendor_id" flex-gt-sm="30" flex-sm="50">
+                    <label>Conversion</label>
+                    <input
+                        type="number"
+                        cake-number-input-formatted
+                        name="newItemVendorConversion"
+                        min="0"
+                        max="999999999.99999"
+                        step="0.00001"
+                        ng-model="vm.newItem.form_data.new_vendor_unit_conversion"
+                        aria-label="Conversion"
+                        ng-disabled="vm.blockers.api_processing || !vm.newItem.form_data.new_vendor_unit_id || !vm.newItem.form_data.common_unit_id"
+                        ng-readonly="vm.newItem.form_data.new_vendor_disable_conversion"
+                        ng-required="vm.newItem.form_data.new_vendor_id"
+                        tabindex="8"
+                    />
+                </md-input-container>
+
+                <div flex-gt-sm="20" flex-sm="50" ng-if="vm.newItem.form_data.new_vendor_id" style="line-height: 75px;">
+                        
+                    {{ vm.newItem.form_data.new_vendor_conversion_label }}        
+
+                </div>
+                
+            </div>
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.newItem.form_data.count_group_id}">
+                    <label>Count Group</label>
+                    <md-select
+                        name="newItemCountGroup"
+                        ng-model="vm.newItem.form_data.count_group_id"
+                        ng-disabled="vm.blockers.api_processing"
+                        aria-label="Count Group"
+                        tabindex="4"
+                        required
+                    >
+                        <md-option ng-repeat="countGroup in vm.countGroups | filter: {is_active: true}" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container ng-if="vm.newItem.form_data.new_vendor_id" flex-gt-sm="50" flex-sm="100">
+                    <label>Last Cost</label>
+                    <input
+                        type="number"
+                        cake-number-input-formatted
+                        name="newItemVendorLastCost"
+                        min="0"
+                        max="999999999.99999"
+                        step="0.00001"
+                        ng-model="vm.newItem.form_data.new_vendor_last_price"
+                        aria-label="Last Cost"
+                        ng-disabled="vm.blockers.api_processing || !vm.newItem.form_data.new_vendor_unit_id"
+                        tabindex="9"
+                    />
+                </md-input-container>
+                
+            </div>
+
+            <div ng-if="!vm.isSingleLocationAccount" layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.newItem.locations.length > 0}">
+                    <label>Locations</label>
+                    <md-select
+                        name="newItemLocations"
+                        ng-model="vm.newItem.locations"
+                        ng-disabled="vm.blockers.api_processing"
+                        aria-label="Locations"
+                        multiple="true"
+                        role="combobox"
+                        tabindex="5"
+                        required
+                    >
+                        <md-option ng-repeat="location in vm.activeLocations" value="{{ ::location.id }}">{{ ::location.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+            </div>
+
+            <div layout="row" layout-align="end center" flex>
+
+                <md-button class="md-primary" ng-click="vm.addNewItem();" ng-disabled="vm.blockers.api_processing || vm.forms.newItemForm.$invalid" title="Add item" aria-label="Add item" tabindex="10">
+                    <span ng-if="!vm.blockers.saving">ADD ITEM</span>
+                    <md-progress-circular ng-if="vm.blockers.saving" md-diameter="24px" md-mode="indeterminate"></md-progress-circular>
+                </md-button>
+
+            </div>
+
+        </div>
+
+    </peach-card-content>
+
+</peach-card>
+
+<peach-card can-collapse="true" is-open="true">
+
+    <peach-card-header title="Filters">
+        <md-button class="md-primary" ng-click="vm.toggleInactiveItems();" ng-disabled="vm.blockers.api_processing" title="{{ vm.filters.show_inactive_items ? 'Hide inactive items' : 'Show inactive items' }}" aria-label="{{ vm.filters.show_inactive_items ? 'Hide inactive items' : 'Show inactive items' }}">
+            {{ vm.filters.show_inactive_items ? 'HIDE INACTIVE ITEMS' : 'SHOW INACTIVE ITEMS' }}
+        </md-button>
+        <md-button ng-show="vm.customFiltersApplied" class="md-primary" ng-click="vm.clearFilters();" ng-disabled="vm.blockers.api_processing" title="Clear filters" aria-label="Clear filters">
+            CLEAR FILTERS
+        </md-button>
+    </peach-card-header>
+
+    <peach-card-content>
+
+        <form ng-if="!vm.isSingleLocationAccount" name="itemsFilters" layout="column" flex class="md-padding"> 
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.gl_account_id}">
+                    <label>Category</label>
+                        <md-select
+                            name="categoryFilter"
+                            ng-model="vm.filters.gl_account_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Category"
+                        >
+                            <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.count_group_id}">
+                    <label>Count Group</label>
+                        <md-select
+                            name="countGroupFilter"
+                            ng-model="vm.filters.count_group_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Count Group"
+                        >
+                            <md-option ng-repeat="countGroup in vm.countGroups" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+            </div>
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.location_id}">
+                    <label>Location</label>
+                        <md-select
+                            name="locationFilter"
+                            ng-model="vm.filters.location_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Location"
+                        >
+                            <md-option ng-repeat="location in vm.activeLocations" value="{{ ::location.id }}">{{ ::location.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.vendor_id}">
+                    <label>Vendor</label>
+                        <md-select
+                            name="vendorFilter"
+                            ng-model="vm.filters.vendor_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Vendor"
+                        >
+                            <md-option ng-repeat="vendor in vm.vendors" value="{{ ::vendor.id }}">{{ ::vendor.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+            </div>
+
+        </form>
+
+        <form ng-if="vm.isSingleLocationAccount" name="itemsFilters" layout="column" flex class="md-padding"> 
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.gl_account_id}">
+                    <label>Category</label>
+                        <md-select
+                            name="categoryFilter"
+                            ng-model="vm.filters.gl_account_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Category"
+                        >
+                            <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.count_group_id}">
+                    <label>Count Group</label>
+                        <md-select
+                            name="countGroupFilter"
+                            ng-model="vm.filters.count_group_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Count Group"
+                        >
+                            <md-option ng-repeat="countGroup in vm.countGroups" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+            </div>
+
+            <div layout="row" flex layout-wrap> 
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.vendor_id}">
+                    <label>Vendor</label>
+                        <md-select
+                            name="vendorFilter"
+                            ng-model="vm.filters.vendor_id"
+                            ng-change="vm.filterTable();"
+                            ng-disabled="vm.blockers.api_processing"
+                            aria-label="Vendor"
+                        >
+                            <md-option ng-repeat="vendor in vm.vendors" value="{{ ::vendor.id }}">{{ ::vendor.name }}</md-option>
+                        </md-select>
+                </md-input-container>
+
+                <div flex></div> <!-- this empty div prevents from prev md-inpu-container being a last child in element - this has impact on styles (padding) -->
+
+            </div>
+
+        </form>
+
+    </peach-card-content>
+
+</peach-card>
+
+<peach-card ng-show="vm.bulkEdit.show_form && vm.canEditItems">
+
+    <peach-card-header title="Assign">
+    </peach-card-header>
+
+    <peach-card-content>
+
+        <form ng-if="!vm.isSingleLocationAccount" name="itemsBulkEdit" class="md-padding" layout="row" flex layout-wrap>
+
+            <md-input-container md-no-float flex-gt-sm="33" flex-sm="100">
+                <md-select
+                    name="categoryBulkEdit"
+                    ng-model="vm.bulkEdit.form_data.gl_account_id"
+                    ng-change="vm.bulkEditItemsCategoryCallback();"
+                    ng-disabled="vm.bulkEdit.checked_items.length == 0 || vm.blockers.api_processing"
+                    aria-label="Category"
+                    placeholder="Category"
+                >
+                    <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                </md-select>
+            </md-input-container>
+            
+            <md-input-container flex-gt-sm="33" flex-sm="100">
+                <md-menu class="fake-md-select">
+                    <div class="fake-md-select-value fake-md-select-placeholder" ng-click="$mdOpenMenu();" title="Location" aria-label="Location">
+                        <span>Location</span>
+                        <span class="fake-md-select-icon" aria-hidden="true"></span>
+                    </div>
+                    <md-menu-content width="5">
+                  
+                    <md-menu-item style="height: auto;">
+                        <div
+                            cake-custom-multiinput-selector
+                            dropdown-disabled="vm.bulkEdit.checked_items.length == 0 || vm.blockers.api_processing"
+                            apply-changes-callback="vm.bulkEditItemsLocationsCallback"
+                            joining-objects="vm.itemLocations"
+                            option-objects="vm.activeLocations"
+                            item-objects="vm.bulkEdit.checked_items"
+                            joining-object-key="id"
+                            joining-object-item-key="inv_item_id"
+                            joining-object-option-key="location_id"
+                            option-object-key="id"
+                            option-object-label="name"
+                            item-object-key="id"
+                        ></div>
+                    </md-menu-item>
+                            
+                    </md-menu-content>
+                </md-menu>
+            </md-input-container>
+
+            <md-input-container md-no-float flex-gt-sm="33" flex-sm="100">
+                <md-select
+                    name="countGroupBulkEdit"
+                    ng-model="vm.bulkEdit.form_data.count_group_id"
+                    ng-change="vm.bulkEditItemsCountGroupCallback();"
+                    ng-disabled="vm.bulkEdit.checked_items.length == 0 || vm.blockers.api_processing"
+                    aria-label="Count Group"
+                    placeholder="Count Group"
+                >
+                    <md-option ng-repeat="countGroup in vm.countGroups | filter: {is_active: true}" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                </md-select>
+            </md-input-container>
+
+        </form>
+
+        <form ng-if="vm.isSingleLocationAccount" name="itemsBulkEdit" class="md-padding" layout="row" flex layout-wrap>
+
+            <md-input-container md-no-float flex-gt-sm="50" flex-sm="100">
+                <md-select
+                    name="categoryBulkEdit"
+                    ng-model="vm.bulkEdit.form_data.gl_account_id"
+                    ng-change="vm.bulkEditItemsCategoryCallback();"
+                    ng-disabled="vm.bulkEdit.checked_items.length == 0 || vm.blockers.api_processing"
+                    aria-label="Category"
+                    placeholder="Category"
+                >
+                    <md-option ng-repeat="glAccount in vm.glAccounts" value="{{ ::glAccount.id }}">{{ ::glAccount.name }}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container md-no-float flex-gt-sm="50" flex-sm="100">
+                <md-select
+                    name="countGroupBulkEdit"
+                    ng-model="vm.bulkEdit.form_data.count_group_id"
+                    ng-change="vm.bulkEditItemsCountGroupCallback();"
+                    ng-disabled="vm.bulkEdit.checked_items.length == 0 || vm.blockers.api_processing"
+                    aria-label="Count Group"
+                    placeholder="Count Group"
+                >
+                    <md-option ng-repeat="countGroup in vm.countGroups | filter: {is_active: true}" value="{{ ::countGroup.id }}">{{ ::countGroup.name }}</md-option>
+                </md-select>
+            </md-input-container>
+
+        </form>
+
+    </peach-card-content>
+
+</peach-card>
+
+<peach-card loading="vm.blockers.table_updating">
+
+    <peach-card-content>
+
+        <!-- this empty div is a placeholder for table data -->
+        <div ng-show="vm.blockers.table_updating" class="md-padding" style="background-color: inherit;" flex>
+            
+            &nbsp;
+
+        </div>
+
+        <md-data-table-container ng-show="!vm.blockers.table_updating">
+
+            <table ng-hide="vm.bulkEdit.show_form" md-data-table>
+
+                <thead>
+                    <tr ng-if="vm.isSingleLocationAccount">
+                        <th style="width: 40%;" name="Item Name"></th>
+                        <th style="width: 20%;" name="Category"></th>
+                        <th style="width: 20%;" name="Count Group"></th>
+                        <th style="width: 20%;" name="Vendors"></th>
+                    </tr>
+                    <tr ng-if="!vm.isSingleLocationAccount">
+                        <th style="width: 35%;" name="Item Name"></th>
+                        <th style="width: 15%;" name="Category"></th>
+                        <th style="width: 20%;" name="Count Group"></th>
+                        <th style="width: 15%;" name="Locations"></th>
+                        <th style="width: 15%;" name="Vendors"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr ng-repeat="item in vm.items" class="{{ !item.is_active ? 'font-disabled' : '' }}">
+
+                        <td>
+                            <a ng-click="vm.openEditItemModal(item.id);" title="View {{ ::item.name }} details">
+                                {{ ::item.name }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ ::item.glAccountName }}
+                        </td>
+
+                        <td style="{{!item.countGroup.is_active ? 'color: #A7A9AC' : ''}}">
+                            {{ ::item.countGroupName }}
+                        </td>
+
+                        <td ng-if="!vm.isSingleLocationAccount">
+
+                            <span style="color: #2E98CC; cursor: pointer;">
+                                <span>
+                                    {{ item.locations.length }}
+                                </span>
+                                <md-tooltip ng-if="item.locations.length > 0" md-direction="left">
+                                    <span ng-repeat="locationName in item.locationsNames track by $index">
+                                        {{ ::locationName }}{{ $last ? '':', '}}
+                                    </span>
+                                </md-tooltip>
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span style="color: #2E98CC; cursor: pointer;">
+                                <span>
+                                    {{ item.vendors.length }}
+                                </span>
+                                <md-tooltip ng-if="item.vendors.length > 0" md-direction="left">
+                                    <span ng-repeat="vendorName in item.vendorsNames track by $index">
+                                        {{ ::vendorName }}{{ $last ? '':', '}}
+                                    </span>
+                                </md-tooltip>
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <table ng-show="vm.bulkEdit.show_form && vm.canEditItems" md-data-table md-row-select="vm.bulkEdit.checked_items">
+
+                <thead>
+                    <tr>
+                        <th style="width: 35%;" name="Item Name"></th>
+                        <th style="width: 15%;" name="Category"></th>
+                        <th style="width: 20%;" name="Count Group"></th>
+                        <th ng-if="!vm.isSingleLocationAccount" style="width: 15%;" name="Locations"></th>
+                        <th style="width: 15%;" name="Vendors"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                
+                    <tr ng-repeat="item in vm.items" class="{{ !item.is_active ? 'font-disabled' : '' }}">
+
+                        <td>
+                            <a ng-click="vm.openEditItemModal(item.id);" title="View {{ ::item.name }} details">
+                                {{ ::item.name }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ ::item.glAccountName }}
+                        </td>
+
+                        <td style="{{!item.countGroup.is_active ? 'color: #A7A9AC' : ''}}">
+                            {{ ::item.countGroupName }}
+                        </td>
+
+                        <td ng-if="!vm.isSingleLocationAccount">
+
+                            <span style="color: #2E98CC; cursor: pointer;">
+                                <span>
+                                    {{ item.locations.length }}
+                                </span>
+                                <md-tooltip ng-if="item.locations.length > 0" md-direction="left">
+                                    <span ng-repeat="locationName in item.locationsNames track by $index">
+                                        {{ ::locationName }}{{ $last ? '':', '}}
+                                    </span>
+                                </md-tooltip>
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span style="color: #2E98CC; cursor: pointer;">
+                                <span>
+                                    {{ item.vendors.length }}
+                                </span>
+                                <md-tooltip ng-if="item.vendors.length > 0" md-direction="left">
+                                    <span ng-repeat="vendorName in item.vendorsNames track by $index">
+                                        {{ ::vendorName }}{{ $last ? '':', '}}
+                                    </span>
+                                </md-tooltip>
+                            </span>
+
+                        </td>
+
+                    </tr>
+                    
+                </tbody>
+
+            </table>
+
+        </md-data-table-container>
+
+        <md-data-table-pagination
+            ng-if="vm.pagination.total_items > vm.pagination.limit && !vm.blockers.table_updating"
+            md-limit="vm.pagination.limit"
+            md-page="vm.pagination.page_no"
+            md-total="{{ vm.pagination.total_items }}"
+            md-row-select="vm.paginationLimits"
+            md-trigger="vm.onPaginationChangeCallback">
+        </md-data-table-pagination>
+
+    </peach-card-content>
+
+</peach-card>

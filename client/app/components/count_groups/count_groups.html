@@ -1,0 +1,83 @@
+<peach-page-header>
+
+    <h1>Count Groups</h1>
+
+    <peach-page-header-options options="vm.headerOptions"></peach-page-header-options>
+
+    <peach-search
+        ng-model="vm.searchParams.searchQuery"
+        ng-change="vm.onSearchPhraseUpdateCallback();"
+        ng-disabled="vm.blockers.api_processing"
+        ng-model-options="{
+           updateOn: 'default blur',
+           debounce: {
+             'default': 500,
+             'blur': 0
+           }
+         }">
+    </peach-search>
+
+</peach-page-header>
+
+<peach-message type="info" dismissible="count_groups_info_displayed">
+    Use Count Groups to organize your items based on the frequency you want to count them. The default group is created automatically, but can be edited to fit your needs. Add additional groups to create count sheets with different frequencies.
+</peach-message>
+
+<peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+    {{ vm.userInfo.message }}
+</peach-message>
+
+<peach-card loading="vm.blockers.api_processing">
+
+    <peach-card-content>
+
+        <md-data-table-container>
+
+            <table md-data-table>
+
+                <thead>
+                    <tr>
+                        <th style="width: 40%;" name="Count Group"></th>
+                        <th style="width: 35%;" name="Frequency"></th>
+                        <th style="width: 25%;" name="# of Items"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr ng-repeat="countGroup in vm.countGroups" ng-class="{'font-disabled': !countGroup.is_active}">
+
+                        <td>
+                            <a ng-click="vm.openEditCountGroupModal(countGroup.id);" title="View {{::countGroup.name}} details" style="{{!countGroup.is_active ? 'color: #A7A9AC' : ''}}">
+                                {{::countGroup.name}}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ ::countGroup.frequency_short }}
+                        </td>
+
+                        <td>
+                            {{ ::countGroup.number_of_items }}
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </md-data-table-container>
+
+        <md-data-table-pagination
+            ng-if="vm.pagination.total_items > vm.pagination.limit"
+            md-limit="vm.pagination.limit"
+            md-page="vm.pagination.page_no"
+            md-total="{{vm.pagination.total_items}}"
+            md-row-select="vm.paginationLimits"
+            md-trigger="vm.onPaginationChangeCallback">
+        </md-data-table-pagination>
+
+    </peach-card-content>
+
+</peach-card>

@@ -1,0 +1,441 @@
+<style>
+
+    #page_frame table[md-data-table]>tbody>tr.font-disabled>td, table[md-data-table]>tbody>tr.font-disabled>td>a, table[md-data-table]>tbody>tr.font-disabled>td>.md-button {
+        color: inherit !important;
+    }
+
+    div[cake-custom-multiinput-selector] md-input-container {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    cake-checkbox{box-sizing:border-box;display:block;margin:8px;white-space:nowrap;cursor:pointer;outline:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;padding-left:18px;padding-right:0;position:relative;line-height:26px;min-width:18px;min-height:18px}html[dir=rtl] cake-checkbox{padding-left:0;padding-right:18px}cake-checkbox *,cake-checkbox :after,cake-checkbox :before{box-sizing:border-box}cake-checkbox.md-focused:not([disabled]) .md-container:before{left:-8px;top:-8px;right:-8px;bottom:-8px}cake-checkbox.md-focused:not([disabled]):not(.md-checked):not(.md-indeterminate) .md-container:before{background-color:rgba(0,0,0,.12)}cake-checkbox .md-container{position:absolute;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);display:inline-block;width:18px;height:18px;left:0;right:auto}html[dir=rtl] cake-checkbox .md-container{left:auto;right:0}cake-checkbox .md-container:before{background-color:transparent;border-radius:50%;content:'';position:absolute;display:block;height:auto;left:0;top:0;right:0;bottom:0;transition:all .5s;width:auto}cake-checkbox .md-container:after{content:'';position:absolute;top:-10px;right:-10px;bottom:-10px;left:-10px}cake-checkbox .md-container .md-ripple-container{position:absolute;display:block;width:auto;height:auto;left:-15px;top:-15px;right:-15px;bottom:-15px}cake-checkbox.md-align-top-left>div.md-container{top:12px}cake-checkbox .md-icon{transition:240ms;position:absolute;top:0;left:0;width:18px;height:18px;border-width:2px;border-style:solid;border-radius:2px}cake-checkbox.md-checked .md-icon,cake-checkbox.md-indeterminate .md-icon{border:none}cake-checkbox[disabled]{cursor:no-drop}cake-checkbox.md-checked .md-icon:after{-webkit-transform:rotate(45deg);transform:rotate(45deg);position:absolute;left:6px;top:2px;display:table;width:6px;height:12px;border-width:2px;border-style:solid;border-top:0;border-left:0;content:''}cake-checkbox .md-label{position:relative;display:inline-block;vertical-align:middle;white-space:normal;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;margin-left:10px;margin-right:0}html[dir=rtl] cake-checkbox .md-label{margin-left:0;margin-right:10px}cake-checkbox.md-indeterminate .md-icon:after{-webkit-transform:rotate(90deg);transform:rotate(90deg);position:absolute;left:12px;top:7px;display:table;width:7px;height:12px;border-width:3px;border-style:solid;border-top:0;border-bottom:0px;border-left:0;content:''}
+
+    cake-checkbox .md-icon {
+        transition: 240ms;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 2px;
+        border-color: rgba(0,0,0,0.54);
+        background-color: #E5E5E5;
+    }
+
+    cake-checkbox.md-default-theme.md-checked .md-icon, cake-checkbox.md-default-theme.md-indeterminate .md-icon {
+        background-color: #2E98CC;
+        border-color: rgba(0,0,0,0.54);
+    }
+
+    cake-checkbox.md-checked .md-icon:after, cake-checkbox.md-indeterminate .md-icon:after {
+        border-color: #ffffff;
+    }
+    
+    cake-checkbox {
+        margin: 10px 10px 10px 20px;
+        padding: 0px 0px 0px 20px;
+    }
+    
+    cake-checkbox .md-container {
+        width: 30px;
+        height: 30px;
+    }
+
+    cake-checkbox .md-container .md-icon {
+        width: 30px;
+        height: 30px;
+        border: 0px;
+        background-color: #b1b3b5;
+    }
+
+    cake-checkbox:not([disabled]) .md-container .md-icon {
+        background-color: #e5e5e5;
+    }
+    
+    cake-checkbox .md-label:not(:empty) {
+        margin-left: 30px;
+    }
+
+    cake-checkbox .md-container:after {
+        top: -10px;
+        right: -20px;
+        bottom: -10px;
+        left: -20px;
+    }
+
+    cake-checkbox:not([disabled]).md-checked .md-container .md-icon {
+        background-color: #2E98CC;
+    }
+
+    cake-checkbox.md-checked .md-icon:after {
+        left: 12px;
+        top: 7px;
+        width: 7px;
+        height: 14px;
+        border-width: 3px;
+    }
+    
+    #page_frame table[md-data-table] md-checkbox {
+        margin: 0px;
+        margin-left: -4px;
+        padding: 0px 0px 0px 14px;
+    }
+
+    #page_frame .fake-md-select {
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        -webkit-box-flex: 1;
+        flex: 1;
+        -webkit-order: 2;
+        -ms-flex-order: 2;
+        -webkit-box-ordinal-group: 3;
+        order: 2;
+        
+        background: none;
+        border-width: 0 0 1px 0;
+        line-height: 26px;
+        -ms-flex-preferred-size: 26px;
+        border-radius: 0;
+        margin: 0;
+    }
+
+    #page_frame .fake-md-select-value {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        padding: 2px 2px 1px;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        position: relative;
+        box-sizing: content-box;
+        min-width: 64px;
+        min-height: 26px;
+        -webkit-flex-grow: 1;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        border-bottom-color: rgba(0,0,0,0.12);
+    }
+
+    #page_frame .fake-md-select-value.fake-md-select-placeholder {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-order: 1;
+        -ms-flex-order: 1;
+        order: 1;
+        -webkit-font-smoothing: antialiased;
+        padding-left: 2px;
+        z-index: 1;
+        color: rgba(0,0,0,0.26);
+        cursor: pointer;
+    }
+
+    #page_frame .fake-md-select-value .fake-md-select-icon {
+        -webkit-align-items: flex-end;
+        -ms-flex-align: end;
+        align-items: flex-end;
+        text-align: end;
+        width: 24px;
+        margin: 0 4px;
+        -webkit-transform: translate3d(0,1px,0);
+        transform: translate3d(0,1px,0);
+    }
+
+    #page_frame .fake-md-select-value .fake-md-select-icon:after {
+        display: block;
+        content: '\25BC';
+        position: relative;
+        top: 2px;
+        speak: none;
+        -webkit-transform: scaleY(.6) scaleX(1);
+        transform: scaleY(.6) scaleX(1);
+    }
+
+    #page_frame .fake-md-select-value :first-child {
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: calc(100% - 2*8px);
+        -webkit-transform: translate3d(0,2px,0);
+        transform: translate3d(0,2px,0);
+    }
+
+</style>
+
+<peach-page-header>
+
+    <div layout="row" flex="initial" layout-wrap layout-align="start center">
+
+        <div flex-gt-sm="initial" flex-sm="100">
+
+            <h1>Vendors <span ng-if="!vm.isSingleLocationAccount">- All Locations</span></h1>
+
+        </div>
+
+        <div ng-if="vm.canEditVendors" hide-sm flex="initial">
+
+            <md-button class="md-primary" ng-click="vm.openEditVendorModal();" ng-disabled="vm.blockers.api_processing" title="Add vendor" aria-label="Add vendor" style="border-left: 1px solid #D8D8D8;">ADD VENDOR</md-button>
+
+        </div>
+
+        <div ng-if="vm.canEditVendors" hide-gt-sm flex="100">
+
+            <md-button class="md-primary" ng-click="vm.openEditVendorModal();" ng-disabled="vm.blockers.api_processing" title="Add vendor" aria-label="Add vendor">ADD VENDOR</md-button>
+
+        </div>
+
+        <div ng-if="vm.canEditVendors && !vm.isSingleLocationAccount" flex-gt-sm="initial" flex-sm="100">
+
+            <md-switch name="isBulkEdit" class="md-primary" ng-model="vm.bulkEdit.is_enabled" ng-change="vm.onBulkEditModeChangeCallback();" ng-disabled="vm.blockers.api_processing" title="Bulk edit" aria-label="Bulk edit">
+                BULK EDIT
+            </md-switch>
+
+        </div>
+
+        <div ng-if="vm.isSingleLocationAccount" flex-gt-sm="initial" flex-sm="100">
+
+            <md-button class="md-primary" ng-click="vm.toggleInactiveVendors();" ng-disabled="vm.blockers.api_processing" title="{{ vm.filters.show_inactive_items ? 'Hide inactive items' : 'Show inactive items' }}" aria-label="{{ vm.filters.show_inactive_items ? 'Hide inactive items' : 'Show inactive items' }}">
+                {{ vm.filters.show_inactive_items ? 'HIDE INACTIVE ITEMS' : 'SHOW INACTIVE ITEMS' }}
+            </md-button>
+
+        </div>
+
+    </div>
+
+    <span flex></span>
+
+    <peach-search
+    ng-model="vm.searchParams.searchQuery"
+    ng-change="vm.onSearchPhraseUpdateCallback();"
+    ng-disabled="vm.blockers.api_processing"
+    ng-model-options="{
+       updateOn: 'default blur',
+       debounce: {
+         'default': 500,
+         'blur': 0
+       }
+     }">
+    </peach-search>
+
+</peach-page-header>
+
+<md-content ng-show="vm.userInfo.message" class="md-padding" style="padding-bottom: 0px;">
+
+    <peach-message type="{{vm.userInfo.type}}">
+        {{ vm.userInfo.message }}
+    </peach-message>
+    
+</md-content>
+
+<md-content>
+
+    <peach-card can-collapse="true" is-open="true" ng-if="!vm.isSingleLocationAccount">
+
+        <peach-card-header title="Filters">
+            <md-button class="md-primary" ng-click="vm.toggleInactiveVendors();" ng-disabled="vm.blockers.api_processing" title="{{ vm.filters.show_inactive_items ? 'Hide inactive items' : 'Show inactive items' }}" aria-label="{{ vm.filters.show_inactive_items ? 'Hide inactive items' : 'Show inactive items' }}">
+                {{ vm.filters.show_inactive_items ? 'HIDE INACTIVE ITEMS' : 'SHOW INACTIVE ITEMS' }}
+            </md-button>
+            <md-button ng-show="vm.filters.gl_account_id || vm.filters.location_id || vm.filters.count_group_id" class="md-primary" ng-click="vm.clearFilters();" ng-disabled="vm.blockers.api_processing" title="Clear filters" aria-label="Clear filters">
+                CLEAR FILTERS
+            </md-button>
+        </peach-card-header>
+
+        <peach-card-content>
+
+            <form name="formFilters" layout="row" flex layout-wrap class="md-padding">
+
+                <md-input-container flex-gt-sm="50" flex-sm="100" ng-class="{'md-input-has-value': vm.filters.location_id}">
+
+                    <label>Location</label>
+
+                    <md-select
+                        name="locationFilter"
+                        ng-model="vm.filters.location_id"
+                        ng-change="vm.filterTable();"
+                        ng-disabled="bvm.lockers.api_processing"
+                        aria-label="Location"
+                    >
+                        <md-option ng-repeat="location in vm.activeLocations" value="{{::location.id}}">{{::location.name}}</md-option>
+                    </md-select>
+
+                </md-input-container>
+
+            </form>
+
+
+        </peach-card-content>
+
+    </peach-card>
+    
+    <peach-card ng-show="vm.bulkEdit.show_form && vm.canEditVendors && !vm.isSingleLocationAccount">
+
+        <peach-card-header title="Assign">
+        </peach-card-header>
+
+        <peach-card-content>
+
+            <form name="itemsBulkEdit" layout="row" flex layout-wrap class="md-padding">
+
+                <md-input-container flex-gt-sm="50" flex-sm="100">
+                    <md-menu class="fake-md-select">
+                        <div class="fake-md-select-value fake-md-select-placeholder" ng-click="$mdOpenMenu();" title="Location" aria-label="Location">
+                            <span>Location</span>
+                            <span class="fake-md-select-icon" aria-hidden="true"></span>
+                        </div>
+                        <md-menu-content width="5">
+                      
+                        <md-menu-item style="height: auto;">
+                            <div
+                                cake-custom-multiinput-selector
+                                dropdown-disabled="vm.bulkEdit.checked_items.length === 0 || vm.blockers.api_processing"
+                                apply-changes-callback="vm.bulkEditVendorLocationsCallback"
+                                joining-objects="vm.vendorLocations"
+                                option-objects="vm.activeLocations"
+                                item-objects="vm.bulkEdit.checked_items"
+                                joining-object-key="id"
+                                joining-object-item-key="vendor_id"
+                                joining-object-option-key="location_id"
+                                option-object-key="id"
+                                option-object-label="name"
+                                item-object-key="id"
+                            ></div>
+                        </md-menu-item>
+                                
+                        </md-menu-content>
+                    </md-menu>
+                </md-input-container>
+
+            </form>
+
+        </peach-card-content>
+
+    </peach-card>
+
+    <peach-card loading="vm.blockers.table_updating">
+        <peach-card-content>
+        
+            <!-- this empty div is a placeholder for table data -->
+            <div ng-show="vm.blockers.table_updating" class="md-padding" style="background-color: inherit;" flex>
+                
+                &nbsp;
+
+            </div>
+
+            <md-data-table-container ng-show="!vm.blockers.table_updating">
+
+                <table ng-hide="vm.bulkEdit.show_form" md-data-table>
+
+                    <thead>
+                        <tr>
+                        
+                            <th colspan="4" style="width: 35%;" name="Vendor Name"></th>
+                            <th style="width: 15%;" name="City"></th>
+                            <th style="width: 15%;" name="State"></th>
+                            <th ng-if="!vm.isSingleLocationAccount" style="width: 15%;" name="Locations"></th>
+                            
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr ng-repeat="vendor in vm.vendors" class="{{ !vendor.is_active ? 'font-disabled' : '' }}">
+                            <td colspan="4">
+                                <a ng-click="vm.openEditVendorModal(vendor.id);" title="View {{ ::vendor.name }} details">
+                                    {{ ::vendor.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {{ ::vendor.city }}
+                            </td>
+                            <td>
+                                {{ ::vendor.state }}
+                            </td>
+                            <td ng-if="!ivm.sSingleLocationAccount">
+
+                                <span style="color: #2E98CC; cursor: pointer;">
+                                    <span>
+                                        {{ ::vendor.locations.length }}
+                                    </span>
+                                    <md-tooltip ng-if="vendor.locations.length > 0" md-direction="left">
+                                        <span ng-repeat="locationName in vendor.locationsNames track by $index">
+                                            {{ ::locationName }}{{ $last ? '':', '}}
+                                        </span>
+                                    </md-tooltip>
+                                </span>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <table ng-show="vm.bulkEdit.show_form && vm.canEditVendors && !vm.isSingleLocationAccount" md-data-table md-row-select="vm.bulkEdit.checked_items">
+
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;" name="Vendor Name"></th>
+                            <th style="width: 15%;" name="City"></th>
+                            <th style="width: 15%;" name="State"></th>
+                            <th style="width: 15%;" name="Locations"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    
+                        <tr ng-repeat="vendor in vm.vendors" class="{{ !vendor.is_active ? 'font-disabled' : '' }}">
+                            <td>
+                                <a ng-click="vm.openEditVendorModal(vendor.id);" title="View {{ ::vendor.name }} details">
+                                    {{ ::vendor.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {{ ::vendor.city }}
+                            </td>
+                            <td>
+                                {{ ::vendor.state }}
+                            </td>
+                            <td>
+
+                                <span style="color: #2E98CC; cursor: pointer;">
+                                    <span>
+                                        {{ ::vendor.locations.length }}
+                                    </span>
+                                    <md-tooltip ng-if="vendor.locations.length > 0" md-direction="left">
+                                        <span ng-repeat="locationName in vendor.locationsNames track by $index">
+                                            {{ ::locationName }}{{ $last ? '':', '}}
+                                        </span>
+                                    </md-tooltip>
+                                </span>
+
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+
+                </table>
+
+            </md-data-table-container>
+
+            <md-data-table-pagination
+                ng-if="vm.pagination.total_items > vm.pagination.limit && !vm.blockers.table_updating"
+                md-limit="vm.pagination.limit"
+                md-page="vm.pagination.page_no"
+                md-total="{{vm.pagination.total_items}}"
+                md-row-select="vm.paginationLimits"
+                md-trigger="vm.onPaginationChangeCallback">
+            </md-data-table-pagination>
+
+        </peach-card-content>
+
+    </peach-card>
+
+</md-content>

@@ -1,0 +1,134 @@
+<peach-modal loading="vm.blockers.initializing">
+
+    <peach-modal-header on-close="vm.goBack();">
+
+        <h1 ng-if="!vm.editedCountGroup.data.id">Add Count Group</h1>
+
+        <form ng-if="vm.editedCountGroup.data.id" name="vm.forms.countGroupHeaderForm" novalidate="true" autocomplete="off">
+
+            <md-input-container flex>
+
+                <label>Group Name</label>
+                <input 
+                    type="text"
+                    name="groupName"
+                    class="modal-header-input"
+                    ng-model="vm.editedCountGroup.form_data.name"
+                    ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                    ng-change="vm.nameChangeCallback('countGroupHeaderForm');"
+                    ng-blur="vm.nameBlurCallback();"
+                    ng-disabled="vm.blockers.api_processing || !vm.canEditCountGroup"
+                    aria-label="Group Name"
+                    ng-maxlength="200"
+                    required />
+                <div ng-messages="vm.forms.countGroupHeaderForm.groupName.$error" ng-if="vm.forms.countGroupHeaderForm.groupName.$invalid && vm.forms.countGroupHeaderForm.groupName.$dirty">
+                    <div ng-message="required">You have to specify a name</div>
+                    <div ng-message="duplicate">Name already exists</div>
+                    <div ng-message="maxlength">Name can't be longer than 200 characters</div>
+                </div>
+
+            </md-input-container>
+
+        </form>
+
+    </peach-modal-header>
+
+    <peach-modal-content>
+
+        <peach-message ng-show="vm.userInfo.message" type="{{ vm.userInfo.type }}">
+            {{ vm.userInfo.message }}
+        </peach-message>
+
+        <form name="vm.forms.countGroupForm" layout="row" layout-wrap novalidate="true" autocomplete="off">
+
+            <div layout="column" flex="100" flex-gt-md="50">
+
+                <md-input-container ng-if="!vm.editedCountGroup.data.id" flex>
+
+                    <label>Group Name</label>
+                    <input 
+                        type="text"
+                        name="groupName"
+                        class="modal-header-input"
+                        ng-model="vm.editedCountGroup.form_data.name"
+                        ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                        ng-change="vm.nameChangeCallback('countGroupForm');"
+                        ng-blur="vm.nameBlurCallback();"
+                        ng-disabled="vm.blockers.api_processing || !vm.canEditCountGroup"
+                        aria-label="Group Name"
+                        ng-maxlength="200"
+                        required />
+                    <div ng-messages="vm.forms.countGroupForm.groupName.$error" ng-if="vm.forms.countGroupForm.groupName.$invalid && vm.forms.countGroupForm.groupName.$dirty">
+                        <div ng-message="required">You have to specify a name</div>
+                        <div ng-message="duplicate">Name already exists</div>
+                        <div ng-message="maxlength">Name can't be longer than 200 characters</div>
+                    </div>
+
+                </md-input-container>
+
+                <md-input-container flex ng-class="{'md-input-has-value': vm.editedCountGroup.form_data.frequencyKey}">
+
+                    <label>Frequency</label>
+
+                    <md-select
+                        name="groupFrequency"
+                        ng-model="vm.editedCountGroup.form_data.frequencyKey"
+                        aria-label="Frequency"
+                        ng-disabled="vm.blockers.api_processing || !vm.canEditCountGroup"
+                        required
+                    >
+                        <md-option ng-repeat="key in vm.predefinedFrequenciesKeys" value="{{ ::key }}">{{ ::key }}</md-option>
+                    </md-select>
+
+                    <div ng-messages="vm.forms.countGroupForm.groupFrequency.$error" ng-if="vm.forms.countGroupForm.groupFrequency.$invalid && vm.forms.countGroupForm.groupFrequency.$dirty">
+                        <div ng-message="required">You have to specify a frequency.</div>
+                    </div>
+
+                </md-input-container>
+
+                <div ng-if="vm.editedCountGroup.data.id" flex>
+
+                    <p ng-if="vm.editedCountGroup.form_data.items.length > 0" flex class="md-caption" style="margin-bottom: 0px;">{{ ::vm.editedCountGroup.form_data.items.length }} Item(s) in Group</p>
+
+                    <p ng-if="vm.editedCountGroup.form_data.items.length > 0" flex style="margin-bottom: 0px; margin-top: 5px;">{{ ::vm.editedCountGroup.form_data.itemNames }}</p>
+
+                    <md-button class="md-primary" style="margin-left: 0px; margin-top: 0px" ng-click="vm.openItemsPage();" title="{{ vm.editedCountGroup.form_data.items.length > 0 ? 'View all on items page' : 'Add items on items page' }}" > {{ vm.editedCountGroup.form_data.items.length > 0 ? 'VIEW ALL ON ITEMS PAGE' : 'ADD ITEMS ON ITEMS PAGE' }}</md-button>
+
+                </div>
+
+                <div flex>
+
+                    <md-switch name="isDefault" class="md-primary" ng-model="vm.editedCountGroup.form_data.is_default" ng-change="vm.isDefaultChangeCallback();" ng-disabled="vm.blockers.api_processing || !vm.canEditCountGroup || vm.disableIsDefaultSwitch" aria-label="Default">
+                        Default
+                    </md-switch>
+
+                </div>
+
+                <div flex>
+
+                    <md-switch name="isActive" class="md-primary" ng-model="vm.editedCountGroup.form_data.is_active" ng-disabled="vm.blockers.api_processing || !vm.canEditCountGroup || vm.editedCountGroup.form_data.is_default" aria-label="Active">
+                        Active
+                    </md-switch>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </peach-modal-content>
+
+    <peach-modal-footer loading="vm.blockers.api_processing">
+
+        <md-button ng-if="vm.editedCountGroup.data.id && vm.canDeleteCountGroup" class="md-raised md-warn has-progress" ng-disabled="vm.blockers.api_processing" ng-click="vm.confirmDeleteCountGroup($event);" aria-label="Delete">Delete</md-button>
+
+        <span flex></span>
+
+        <md-button class="md-primary" md-no-ink ng-disabled="vm.blockers.api_processing" ng-click="vm.goBack();" aria-label="Cancel">Cancel</md-button>
+
+        <md-button ng-if="vm.editedCountGroup.data.id && vm.canEditCountGroup" class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.countGroupForm.$invalid || vm.forms.countGroupHeaderForm.$invalid" ng-click="vm.saveCountGroup();" aria-label="Save Changes">Save Changes</md-button>
+        <md-button ng-if="!vm.editedCountGroup.data.id && vm.canEditCountGroup" class="md-raised md-primary has-progress" ng-disabled="vm.blockers.api_processing || vm.forms.countGroupForm.$invalid || vm.forms.countGroupHeaderForm.$invalid" ng-click="vm.saveCountGroup();" aria-label="Save Count Group">Save Count Group</md-button>
+
+    </peach-modal-footer>
+
+</peach-modal>
