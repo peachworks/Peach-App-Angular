@@ -8,18 +8,18 @@ import angularCookies from 'angular-cookies';
 import angularMaterial from 'angular-material';
 import angularRoute from 'angular-route';
 import angularSanitize from 'angular-sanitize';
-import ngPeach from 'ng-peach';
-import _ from 'lodash';
+import 'ng-peach';
+import 'lodash';
 
-import 'angular-material/angular-material.min.css'
+import 'angular-material/angular-material.min.css';
 import 'peach.css';
 
 import routing from './app.config';
 
 // Components
-import IntroController            from './components/intro/intro';
-import MainController             from './components/main/main';
-import SetupController            from './components/setup/setup';
+import IntroController from './components/intro/intro';
+import MainController from './components/main/main';
+import SetupController from './components/setup/setup';
 
 angular.module(peachRc.framework.angular.module, [
   angularAnimate,
