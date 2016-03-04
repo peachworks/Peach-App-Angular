@@ -1,9 +1,9 @@
 {
-  "key": "fictionalOctoTribble",
+  "key": "APP_KEY",
   "framework": {
     "angular": {
-      "module": "fictionalOctoTribble",
-      "version": "1.4.8"
+      "module": "APP_MODULE_NAME",
+      "version": "1.5.0"
     }
   }
 }
