@@ -1,31 +1,30 @@
-'use strict';
+import Intro from './components/intro/intro';
+import Main from './components/main/main';
+import Setup from './components/setup/setup';
 
 function AppConfig($routeProvider, $httpProvider) {
   $httpProvider.interceptors.push('peachInterceptorAPI');
 
   $routeProvider
     .when('/intro', {
-      name: 'Intro',
-      position: 0,
-      template: require('./components/intro/intro.html'),
-      controller: 'IntroController',
-      controllerAs: 'intro',
-      is_welcome_page: true
+      name: Intro.name,
+      template: Intro.template,
+      controller: Intro.controllerName,
+      controllerAs: Intro.controllerAs,
+      is_welcome_page: true // Reference only.  Change in DevPortal
     })
     .when('/main', {
-      name: 'Main',
-      position: 1,
-      template: require('./components/main/main.html'),
-      controller: 'MainController',
-      controllerAs: 'main'
+      name: Main.name,
+      template: Main.template,
+      controller: Main.controllerName,
+      controllerAs: Main.controllerAs
     })
     .when('/settings/setup', {
-      name: 'Setup',
-      position: 0,
-      template: require('./components/setup/setup.html'),
-      controller: 'SetupController',
-      controllerAs: 'setup',
-      is_settings_page: true
+      name: Setup.name,
+      template: Setup.template,
+      controller: Setup.controllerName,
+      controllerAs: Setup.controllerAs,
+      is_settings_page: true  // Reference only.  Change in DevPortal
     })
     .otherwise({
       redirectTo: '/intro'

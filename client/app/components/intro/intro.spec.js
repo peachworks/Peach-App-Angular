@@ -1,5 +1,5 @@
 import peachApp from '../../app';
-import {IntroController} from './intro';
+import Intro from './intro';
 
 describe('Component: Intro', () => {
   let $rootScope, $controller, ctrl;
@@ -9,7 +9,7 @@ describe('Component: Intro', () => {
   beforeEach(angular.mock.inject(($injector) => {
     $rootScope = $injector.get('$rootScope');
     $controller = $injector.get('$controller');
-    ctrl = $controller('IntroController', {});
+    ctrl = $controller(Intro.controllerName, {});
   }));
 
   describe('Constructor', () => {

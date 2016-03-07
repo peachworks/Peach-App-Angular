@@ -14,4 +14,10 @@ class IntroController {
 
 IntroController.$inject = [];
 
-export default IntroController;
+export default {
+  controller: IntroController,
+  controllerName: 'IntroController',
+  controllerAs: 'intro',
+  name: 'Intro',
+  template: require('./intro.html')
+};

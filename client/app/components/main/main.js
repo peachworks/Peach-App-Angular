@@ -6,4 +6,10 @@ class MainController {
 
 MainController.$inject = [];
 
-export default MainController;
+export default {
+  controller: MainController,
+  controllerName: 'MainController',
+  controllerAs: 'main',
+  name: 'Main',
+  template: require('./main.html')
+};

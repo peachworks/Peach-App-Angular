@@ -17,9 +17,9 @@ import 'peach.css';
 import routing from './app.config';
 
 // Components
-import IntroController from './components/intro/intro';
-import MainController from './components/main/main';
-import SetupController from './components/setup/setup';
+import Intro from './components/intro/intro';
+import Main from './components/main/main';
+import Setup from './components/setup/setup';
 
 angular.module(peachRc.framework.angular.module, [
   angularAnimate,
@@ -32,8 +32,8 @@ angular.module(peachRc.framework.angular.module, [
   'ngPeach.ui'  // Need to fix this to export properly from ngPeach
 ])
   .config(routing)
-  .controller('IntroController', IntroController)
-  .controller('MainController', MainController)
-  .controller('SetupController', SetupController);
+  .controller(Intro.controllerName, Intro.controller)
+  .controller(Main.controllerName, Main.controller)
+  .controller(Setup.controllerName, Setup.controller);
 
 export default peachRc.framework.angular.module;

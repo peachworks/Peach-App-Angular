@@ -6,4 +6,10 @@ class SetupController {
 
 SetupController.$inject = [];
 
-export default SetupController;
+export default {
+  controller: SetupController,
+  controllerName: 'SetupController',
+  controllerAs: 'setup',
+  name: 'Setup',
+  template: require('./setup.html')
+};
