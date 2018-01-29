@@ -8,8 +8,8 @@ import angularCookies from 'angular-cookies';
 import angularMaterial from 'angular-material';
 import angularRoute from 'angular-route';
 import angularSanitize from 'angular-sanitize';
-import 'ng-peach';
 import 'lodash';
+import 'ng-peach';
 
 import 'angular-material/angular-material.min.css';
 import 'peach.css';

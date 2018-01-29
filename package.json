@@ -1,36 +1,36 @@
 {
-  "name": "REPOSITORY_NAME",
+  "name": "mg_menu_planner",
   "private": true,
   "version": "1.0.0",
-  "description": "Peach Application Scaffold",
+  "description": "Peach App for Meriwether Godsey",
   "scripts": {
     "test": "peach test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/peachworks/REPOSITORY_NAME.git"
+    "url": "git+https://github.com/peachworks/peach_mg_menu_planner.git"
   },
   "author": "YOUR_NAME <YOUR_EMAIL>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/peachworks/REPOSITORY_NAME/issues"
+    "url": "https://github.com/peachworks/peach_mg_menu_planner/issues"
   },
-  "homepage": "https://github.com/peachworks/REPOSITORY_NAME#readme",
+  "homepage": "https://github.com/peachworks/peach_mg_menu_planner#readme",
   "dependencies": {
-    "angular": "1.5.0",
-    "angular-animate": "1.5.0",
-    "angular-aria": "1.5.0",
-    "angular-cache": "4.3.2",
-    "angular-cookies": "1.5.0",
-    "angular-material": "1.0.6",
-    "angular-route": "1.5.0",
-    "angular-sanitize": "1.5.0",
-    "lodash": "3.10.1",
-    "ng-peach": "1.0.8",
-    "peach.css": "0.5.4"
+    "angular": "1.5.8",
+    "angular-animate": "1.5.8",
+    "angular-aria": "1.5.8",
+    "angular-cache": "4.6.0",
+    "angular-cookies": "1.5.8",
+    "angular-material": "1.1.6",
+    "angular-route": "1.5.8",
+    "angular-sanitize": "1.5.8",
+    "lodash": "4.17.4",
+    "ng-peach": "2.1.14",
+    "peach.css": "0.7.9"
   },
   "devDependencies": {
-    "angular-mocks": "1.5.0"
+    "angular-mocks": "1.5.8"
   },
   "engines": {
     "node": ">=4.2.3",

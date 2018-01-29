@@ -1,9 +1,9 @@
 {
-  "key": "APP_KEY",
+  "key": "mg_menu_planner",
   "framework": {
     "angular": {
-      "module": "APP_MODULE_NAME",
-      "version": "1.5.0"
+      "module": "mgMenuPlanner",
+      "version": "1.5.8"
     }
   }
 }
